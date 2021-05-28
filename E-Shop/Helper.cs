@@ -9,7 +9,6 @@ namespace E_Shop
 {
     static class Helper
     {
-        public delegate void Method();
         public static string path = Directory.GetCurrentDirectory() + @"\E-Shop\accounts\database.bd";
         public static void FirstLaunch()
         {

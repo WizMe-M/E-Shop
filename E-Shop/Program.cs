@@ -9,10 +9,8 @@ namespace E_Shop
     {
         static void Main(string[] args)
         {
-            //список всех аккаунтов, которыми в ходе программы будем манипулировать
             List<Account> accounts = new List<Account>();
             BinaryFormatter formatter = new BinaryFormatter();
-
             Console.WriteLine("\tПроект \"Электронный магазин\" E-Shop\n\n");
             Helper.FirstLaunch();
 
@@ -31,19 +29,9 @@ namespace E_Shop
                 do user = Helper.LoginAccount(accounts);
                 while (user == null);
                 int i;
-                int length;
-                //вы
-                switch (user.GetType().Name)
-                {
-                    case "Admin":
-                        do
-                        {
-                            i = 0;
-                            length = ((Admin)user).MyFunctions.Length;
-                            
-                        } while (i != length - 1);
-                        break;
-                }
+                do i = user.MainFunction(accounts);
+                while (i == 0);
+                if (i == -1) break;
             } while (true);
 
             {
@@ -53,10 +41,8 @@ namespace E_Shop
                 //    $"\nЛогин пользователя:\t{acc.Login}" +
                 //    $"\nПароль пользователя:\t{acc.Password}" +
                 //    $"\nФИО: {acc.LastName} {acc.FirstName} {acc.Patronomic}" +
-                //    $"\nДата рождения: {acc.BirthdayDate.ToShortDateString()}" +
-                //    $"\nВозраст: {acc.Age}" +
-                //    $"\nОбразование: {acc.StudyYears} лет" +
-                //    $"\nОпыт работы: {acc.WorkExperience} лет" +
+                //    $"\nДата рождения: {acc.BirthdayDate.ToShortDateString()}; Возраст: {acc.Age}" +
+                //    $"\nОбразование: {acc.StudyYears} лет; Опыт работы: {acc.WorkExperience} лет" +
                 //    $"\nДолжность: {acc.Position}; Зарплата: {acc.Salary}");
                 //    Console.WriteLine();
                 //}

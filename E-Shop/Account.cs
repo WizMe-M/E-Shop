@@ -10,8 +10,8 @@ namespace E_Shop
     [Serializable]
     abstract class Account
     {
-        public abstract string[] Functions { get; }
-        public abstract Helper.Method[] MyFunctions { get; }
+        public bool isDeleted { get; set; }
+        public bool isHired { get; set; }
         public abstract string Role { get; }
         public string Login { get; set; }
         public string Password { get; set; }
@@ -68,5 +68,6 @@ namespace E_Shop
             Console.ReadKey();
             return account;
         }
+        public abstract int MainFunction(List<Account> accounts);
     }
 }

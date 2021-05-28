@@ -9,8 +9,9 @@ namespace E_Shop
     {
         public override string Role { get; } = nameof(Personnel);
 
-        public override string[] Functions => throw new NotImplementedException();
-
-        public override Helper.Method[] MyFunctions => throw new NotImplementedException();
+        public override int MainFunction(List<Account> accounts)
+        {
+            return 0;
+        }
     }
 }
