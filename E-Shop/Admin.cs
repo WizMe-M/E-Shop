@@ -11,9 +11,9 @@ namespace E_Shop
     class Admin : Account
     {
         public override string Role { get; } = nameof(Admin);
-        //регистрация администратора
+        public override string[] Functions { get; } = { "Зарегистрировать нового пользователя" };
+        public override Helper.Method[] MyFunctions { get; } = { RegisterAccount };
         public Admin() { }
-
         //получение экземпляра класса Админ
         public Admin(string Login, string Password)
         {
@@ -22,7 +22,7 @@ namespace E_Shop
         }
 
         //админ регистрирует нового пользователя в базу данных
-        public void RegisterAccount()
+        public static void RegisterAccount()
         {
             Console.WriteLine("Регистрирую нового пользователя...");
             Console.WriteLine();

@@ -23,11 +23,28 @@ namespace E_Shop
                 Console.WriteLine("Все аккаунты десериализованы!");
             }
 
-            Console.Clear();
             Account user;
+            //логин в акк
             do
-                user = Helper.LoginAccount(accounts);
-            while (user == null);
+            {
+                Console.Clear();
+                do user = Helper.LoginAccount(accounts);
+                while (user == null);
+                int i;
+                int length;
+                //вы
+                switch (user.GetType().Name)
+                {
+                    case "Admin":
+                        do
+                        {
+                            i = 0;
+                            length = ((Admin)user).MyFunctions.Length;
+                            
+                        } while (i != length - 1);
+                        break;
+                }
+            } while (true);
 
             {
                 //foreach (Account acc in accounts)

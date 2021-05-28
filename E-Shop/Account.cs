@@ -7,10 +7,11 @@ using System.Threading;
 
 namespace E_Shop
 {
-    //нужен?
     [Serializable]
     abstract class Account
     {
+        public abstract string[] Functions { get; }
+        public abstract Helper.Method[] MyFunctions { get; }
         public abstract string Role { get; }
         public string Login { get; set; }
         public string Password { get; set; }
