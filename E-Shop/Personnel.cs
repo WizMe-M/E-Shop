@@ -7,11 +7,7 @@ namespace E_Shop
 {
     class Personnel : Account
     {
-        public override string Role { get; } = typeof(Personnel).Name;
-        public Personnel()
-        {
-            
-        }
-
+        public override string Role { get; } = nameof(Personnel);
+        
     }
 }

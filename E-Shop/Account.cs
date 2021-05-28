@@ -57,57 +57,15 @@ namespace E_Shop
             Account account = null;
             switch (role)
             {
-                case "Админ":
+                case "Admin":
                     account = new Admin(l, p);
                     break;
             }
             Console.WriteLine($"Тип аккаунта: {account.Role}");
             Console.WriteLine($"Логин: {account.Login}\nПароль: {account.Password}");
-            account.AddAccountAtDataBase();
-            account.SerializeAccount();
             Console.WriteLine("Нажмите любую клавишу...");
             Console.ReadKey();
             return account;
-        }
-        public void SerializeAccount()
-        {
-            string path = Directory.GetCurrentDirectory() + @$"\E-Shop\accounts\{Role}\{Login}.acc";
-            BinaryFormatter formatter = new BinaryFormatter();
-            if (File.Exists(path))
-            {
-                using FileStream fileStream = new FileStream(path, FileMode.Truncate);
-                formatter.Serialize(fileStream, this);
-                fileStream.Close();
-            }
-            else
-            {
-                using FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate);
-                formatter.Serialize(fileStream, this);
-                fileStream.Close();
-            }
-        }
-        public Account DeserializeAccount()
-        {
-            string path = Directory.GetCurrentDirectory() + @$"\E-Shop\accounts\{Role}\{Login}.acc";
-            BinaryFormatter formatter = new BinaryFormatter();
-            using FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate);
-            switch (Role)
-            {
-                case "Admin":
-                    Admin admin = (Admin)formatter.Deserialize(fileStream);
-                    fileStream.Close();
-                    return admin;
-                default:
-                    return null;
-            }
-        }
-        public void AddAccountAtDataBase()
-        {
-            string path = Directory.GetCurrentDirectory() + @"\E-Shop\accounts\database.bd";
-            using BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Append));
-            writer.Write(Login);
-            writer.Write(Password);
-            writer.Write(GetType().Name);
         }
     }
 }

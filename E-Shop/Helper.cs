@@ -3,72 +3,64 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace E_Shop
 {
-    class Helper
+    static class Helper
     {
+        public static string path = Directory.GetCurrentDirectory() + @"\E-Shop\accounts\database.bd";
         public static void FirstLaunch()
         {
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\E-Shop");
             if (!dir.Exists)
             {
                 Console.WriteLine("Запускаю протокол первичного запуска...");
-                Console.WriteLine("Зарегистрирован новый пользователь (администратор)");
+                Console.WriteLine($"Зарегистрирован новый пользователь ({nameof(Admin)})");
                 Admin admin = new Admin("admin", "admin");
                 Console.WriteLine($"Логин: {admin.Login}\nПароль: {admin.Password}");
-                Console.WriteLine("Нажмите любую клавишу...");
-                Console.ReadKey();
 
                 dir.Create();
                 dir.CreateSubdirectory("accounts");
-                dir.CreateSubdirectory("accounts\\Admin");
-                admin.AddAccountAtDataBase();
-                admin.SerializeAccount();
+                List<Account> accounts = new List<Account>() { admin };
+                BinaryFormatter formatter = new BinaryFormatter();
+                using FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate);
+                formatter.Serialize(fileStream, accounts);
+                fileStream.Close();
+                Console.WriteLine("Все аккаунты сериализованы!");
+                Console.WriteLine("Нажмите любую клавишу...");
+                Console.ReadKey();
             }
         }
-        public static Account LoginAccount()
+        public static Account LoginAccount(List<Account> accounts)
         {
-            string path = Directory.GetCurrentDirectory() + @"\E-Shop\accounts\database.bd";
-            string log;
-            string pass;
-            string role;
 
             Console.Clear();
             Console.WriteLine("Запускаю процесс входа в аккаунт...");
+            Console.WriteLine("\nВведите логин:");
+            string login = Console.ReadLine().Trim();
+            Console.WriteLine("\nВведите пароль:");
+            string password = Console.ReadLine().Trim();
 
-            //цикличный ввод логина и пароля
-            do
+
+            foreach (Account acc in accounts)
             {
-                Console.WriteLine("\nВведите логин:");
-                string login = Console.ReadLine().Trim();
-                Console.WriteLine("\nВведите пароль:");
-                string password = Console.ReadLine().Trim();
-
-                using BinaryReader reader = new BinaryReader(File.OpenRead(path));
-                while (reader.PeekChar() > -1)
+                if (login.Equals(acc.Login) && password.Equals(acc.Password))
                 {
-                    log = reader.ReadString();
-                    pass = reader.ReadString();
-                    role = reader.ReadString();
-
-                    if (login.Equals(log) && password.Equals(pass))
+                    switch (acc.GetType().Name)
                     {
-                        switch (role)
-                        {
-                            case "Admin":
-                                Admin admin = new Admin(log, pass);
-                                return admin;
-                            default:
-                                return null;
-                        }
+                        case "Admin":
+                            Admin admin = (Admin)acc;
+                            return admin;
+                        default:
+                            return null;
                     }
                 }
-                reader.Close();
-                Console.WriteLine("Аккаунта с такими данными не существует!");
-                Console.WriteLine("Нажмите любую кнопку, чтобы попробовать войти ещё раз...");
-                Console.ReadKey();
-            } while (true);
+            }
+            Console.WriteLine("Аккаунта с такими данными не существует!");
+            Console.WriteLine("Нажмите любую кнопку, чтобы попробовать войти ещё раз...");
+            Console.ReadKey();
+            return null;
         }
         public static bool Check(string s, string type)
         {

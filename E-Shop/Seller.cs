@@ -4,7 +4,8 @@ using System.Text;
 
 namespace E_Shop
 {
-    class Seller
+    class Seller : Account
     {
+        public override string Role { get; } = nameof(Seller);
     }
 }

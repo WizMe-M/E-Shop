@@ -10,34 +10,9 @@ namespace E_Shop
     [Serializable]
     class Admin : Account
     {
-        public override string Role { get; } = typeof(Admin).Name;
+        public override string Role { get; } = nameof(Admin);
         //регистрация администратора
-        public Admin()
-        {
-            Console.WriteLine("Запускаю процесс регистрации администратора...");
-            Thread.Sleep(2000);
-            Console.Clear();
-
-            Console.WriteLine("Введите логин: ");
-            string l;
-            do l = Console.ReadLine();
-            while (Helper.Check(l, "логин"));
-            Console.Clear();
-            Console.WriteLine("Введите пароль: ");
-            string p;
-            do p = Console.ReadLine();
-            while (Helper.Check(p, "пароль"));
-
-            Console.Clear();
-            Console.WriteLine("Регистрация завершена");
-            Login = l;
-            Password = p;
-            Console.WriteLine($"Логин: {Login}\nПароль: {Password}");
-            AddAccountAtDataBase();
-            SerializeAccount();
-            Console.WriteLine("Нажмите любую клавишу...");
-            Console.ReadKey();
-        }
+        public Admin() { }
 
         //получение экземпляра класса Админ
         public Admin(string Login, string Password)
@@ -50,6 +25,7 @@ namespace E_Shop
         public void RegisterAccount()
         {
             Console.WriteLine("Регистрирую нового пользователя...");
+            Console.WriteLine();
         }
     }
 }
