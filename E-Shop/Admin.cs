@@ -31,10 +31,22 @@ namespace E_Shop
         public override int MainFunction(List<Account> accounts)
         {
             string[] functions = { "Зарегистрировать пользователя", "Выйти из аккаунта", "Выйти из приложения" };
-            int i = 0;
-            if (i == functions.Length - 2) return 1;
-            else if (i == functions.Length - 1) return -1;
-            else return 0;
+            ConsoleMenu adminMenu = new ConsoleMenu(functions);
+            int i = adminMenu.PrintMenu();
+            switch (i)
+            {
+                case 0:
+                    RegisterAccount();
+                    break;
+                case 1:
+                    return 1;
+                case 2:
+                    return -1;
+                default:
+                    break;
+            }
+            Console.ReadKey();
+            return 0;
         }
     }
 }

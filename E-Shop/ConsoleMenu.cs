@@ -46,13 +46,8 @@ namespace E_Shop
                         if (counter == menuItems.Length)
                             counter = 0;
                         break;
-                    //возвращаем строчку выбранного элемента
                     case ConsoleKey.Enter:
                         return counter;
-                    //возвращаем -1, чтобы выйти на предыдущий уровень меню
-                    case ConsoleKey.Backspace:
-                    case ConsoleKey.Escape:
-                        return -1;
                 }
             }
             while (true);

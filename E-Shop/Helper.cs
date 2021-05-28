@@ -62,6 +62,46 @@ namespace E_Shop
             Console.ReadKey();
             return null;
         }
+        public static int PrintConsoleMenu(string[] menuItems)
+        {
+            ConsoleKeyInfo key;
+            int counter = 0;
+            do
+            {
+                Console.Clear();
+                for (int i = 0; i < menuItems.Length; i++)
+                {
+                    if (counter == i)
+                    {
+                        Console.BackgroundColor = ConsoleColor.Cyan;
+                        Console.ForegroundColor = ConsoleColor.Black;
+                        Console.WriteLine(menuItems[i]);
+                        Console.BackgroundColor = ConsoleColor.Black;
+                        Console.ForegroundColor = ConsoleColor.White;
+                    }
+                    else
+                        Console.WriteLine(menuItems[i]);
+                }
+
+                key = Console.ReadKey(true);
+                switch (key.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        counter--;
+                        if (counter == -1)
+                            counter = menuItems.Length - 1;
+                        break;
+                    case ConsoleKey.DownArrow:
+                        counter++;
+                        if (counter == menuItems.Length)
+                            counter = 0;
+                        break;
+                    case ConsoleKey.Enter:
+                        return counter;
+                }
+            }
+            while (true);
+        }
         public static bool Check(string s, string type)
         {
             //эти проверки должны быть в свойствах Account
