@@ -30,9 +30,19 @@ namespace E_Shop
         [NonSerialized]
         int study;
         public int StudyYears { get; set; } = 0;
-
         public int WorkExperience { get; set; } = 0;
-        public string WorkPlace { get; set; } = "Не указано";
+        [NonSerialized]
+        string place;
+        public string WorkPlace 
+        { 
+            get { return place; } 
+            set 
+            {
+                if (this is Admin || this is Personnel)
+                    place = "Офис";
+                else place = value;
+            }
+        }
         public double Salary { get; set; } = 0;
 
         public Account() 
@@ -72,6 +82,6 @@ namespace E_Shop
             Console.ReadKey();
             return account;
         }
-        public abstract int MainFunction();
+        public abstract int MainMenu();
     }
 }

@@ -10,8 +10,16 @@ namespace E_Shop
     class Personnel : Account
     {
 
-        public Personnel() : base() { Position = "Кадровик"; }
-        public Personnel(string Login, string Password) : base(Login, Password) { Position = "Кадровик"; }
+        public Personnel() : base() 
+        {
+            Position = "Кадровик";
+            WorkPlace = "Офис";
+        }
+        public Personnel(string Login, string Password) : base(Login, Password) 
+        { 
+            Position = "Кадровик";
+            WorkPlace = "Офис";
+        }
 
         void ShowUsers(List<Account> accounts)
         {
@@ -162,7 +170,7 @@ namespace E_Shop
             } while (true);
 
         }
-        public override int MainFunction()
+        public override int MainMenu()
         {
             List<Account> accounts = Helper.GetAllAcounts();
             string[] functions = {

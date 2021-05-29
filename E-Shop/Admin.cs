@@ -11,10 +11,17 @@ namespace E_Shop
     [Serializable]
     class Admin : Account
     {
-        public Admin() : base() { Position = "Администратор"; }
-        public Admin(string Login, string Password) : base(Login, Password) { Position = "Администратор"; }
+        public Admin() : base()
+        {
+            Position = "Администратор";
+            WorkPlace = "Офис";
+        }
+        public Admin(string Login, string Password) : base(Login, Password)
+        {
+            Position = "Администратор";
+            WorkPlace = "Офис";
+        }
 
-        //админ регистрирует нового пользователя в базу данных
         void ShowAccount(List<Account> accounts)
         {
             List<string> accLogins = new List<string>();
@@ -44,19 +51,22 @@ namespace E_Shop
                 Console.ReadKey();
             } while (true);
         }
-        Account RegisterNewAccount()
+        void RegisterNewAccount(ref List<Account> accounts)
         {
+
             string[] accountTypes = { "Администратор", "Кадровик", "Назад" };
             do
             {
                 ConsoleMenu registerMenu = new ConsoleMenu(accountTypes);
                 int choseType = registerMenu.PrintMenu();
-                return choseType switch
+                Account newAccount = choseType switch
                 {
                     0 => (Admin)Registration("Администратор"),
                     1 => (Personnel)Registration("Кадровик"),
                     _ => null,
                 };
+                if (newAccount != null)
+                    accounts.Add(newAccount);
             } while (true);
         }
         void ChangeAccountDeleteStatus(ref List<Account> accounts, bool toDeleteStatus)
@@ -158,7 +168,7 @@ namespace E_Shop
             } while (true);
         }
 
-        public override int MainFunction()
+        public override int MainMenu()
         {
             List<Account> accounts = Helper.GetAllAcounts();
             string[] functions = {
@@ -181,9 +191,7 @@ namespace E_Shop
                     EditAccount(ref accounts);
                     break;
                 case 2:
-                    Account acc = RegisterNewAccount();
-                    if (acc != null)
-                        accounts.Add(acc);
+                    RegisterNewAccount(ref accounts);
                     break;
                 case 3:
                     ChangeAccountDeleteStatus(ref accounts, true);

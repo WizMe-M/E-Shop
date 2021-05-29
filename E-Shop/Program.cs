@@ -22,7 +22,7 @@ namespace E_Shop
                 int i;
                 do
                 {
-                    i = user.MainFunction();
+                    i = user.MainMenu();
                 }
                 while (i == 0);
                 if (i == -1) break;
