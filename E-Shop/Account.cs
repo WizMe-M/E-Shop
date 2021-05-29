@@ -11,7 +11,7 @@ namespace E_Shop
     abstract class Account
     {
         public bool isDeleted { get; set; } = false;
-        public bool isHired { get; set; } = false;
+        public bool isHired { get; set; } = true;
         public string Position { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
@@ -47,7 +47,6 @@ namespace E_Shop
             this.Password = Password;
         }
 
-        //первичная регистрация аккаунта
         public static Account Registration(string role)
         {
             Console.WriteLine($"Аккаунт типа \"{role}\"");
@@ -55,22 +54,15 @@ namespace E_Shop
             Console.Clear();
 
             Console.WriteLine("Введите логин: ");
-            string l;
-            l = Console.ReadLine();
-            //do l = Console.ReadLine();
-            ////while (Helper.Check(l, "логин"));
-            //Console.Clear();
+            string l = Console.ReadLine();
             Console.WriteLine("Введите пароль: ");
-            string p;
-            p = Console.ReadLine();
-            //do p = Console.ReadLine();
-            //while (Helper.Check(p, "пароль"));
-
+            string p = Console.ReadLine();
             Console.Clear();
             Console.WriteLine("Регистрация завершена");
             Account account = role switch
             {
-                "Admin" => new Admin(l,p),
+                "Администратор" => new Admin(l,p),
+                "Кадровик" => new Personnel(l,p),
                 _ => null,
             };
 

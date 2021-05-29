@@ -46,7 +46,7 @@ namespace E_Shop
         }
         Account RegisterNewAccount()
         {
-            string[] accountTypes = { "Администратористратор", "Назад" };
+            string[] accountTypes = { "Администратор", "Кадровик", "Назад" };
             do
             {
                 ConsoleMenu registerMenu = new ConsoleMenu(accountTypes);
@@ -54,6 +54,7 @@ namespace E_Shop
                 return choseType switch
                 {
                     0 => (Admin)Registration("Администратор"),
+                    1 => (Personnel)Registration("Кадровик"),
                     _ => null,
                 };
             } while (true);
@@ -105,7 +106,9 @@ namespace E_Shop
                 do
                 {
                     string[] accountData =
-                  {
+                    {
+                    "Логин - " + accounts[index].Login,
+                    "Пароль - " + accounts[index].Password,
                     "Фамилия - " + accounts[index].FirstName,
                     "Имя - " + accounts[index].LastName,
                     "Отчество - " + accounts[index].Patronomic,
@@ -113,9 +116,8 @@ namespace E_Shop
                     "Возраст - " + accounts[index].Age.ToString(),
                     "Образование - " + accounts[index].StudyYears.ToString(),
                     "Опыт работы - " + accounts[index].WorkExperience.ToString(),
-                    "Зарплата - " + accounts[index].Salary.ToString(),
                     "Назад"
-                };
+                    };
                     ConsoleMenu dataMenu = new ConsoleMenu(accountData);
                     int chooseData = dataMenu.PrintMenu();
                     if (chooseData == accountData.Length - 1) break;
@@ -125,28 +127,31 @@ namespace E_Shop
                     switch (chooseData)
                     {
                         case 0:
-                            accounts[index].FirstName = changedData;
+                            accounts[index].Login = changedData;
                             break;
                         case 1:
-                            accounts[index].LastName = changedData;
+                            accounts[index].Password = changedData;
                             break;
                         case 2:
-                            accounts[index].Patronomic = changedData;
+                            accounts[index].FirstName = changedData;
                             break;
                         case 3:
-                            accounts[index].BirthdayDate = DateTime.Parse(changedData);
+                            accounts[index].LastName = changedData;
                             break;
                         case 4:
-                            accounts[index].Age = int.Parse(changedData);
+                            accounts[index].Patronomic = changedData;
                             break;
                         case 5:
-                            accounts[index].StudyYears = int.Parse(changedData);
+                            accounts[index].BirthdayDate = DateTime.Parse(changedData);
                             break;
                         case 6:
-                            accounts[index].WorkExperience = int.Parse(changedData);
+                            accounts[index].Age = int.Parse(changedData);
                             break;
                         case 7:
-                            accounts[index].Salary = double.Parse(changedData);
+                            accounts[index].StudyYears = int.Parse(changedData);
+                            break;
+                        case 8:
+                            accounts[index].WorkExperience = int.Parse(changedData);
                             break;
                     }
                 } while (true);
@@ -157,11 +162,11 @@ namespace E_Shop
         {
             List<Account> accounts = Helper.GetAllAcounts();
             string[] functions = {
-                "Просмотреть данные об аккаунте",
+                "Просмотреть данные пользователя",
                 "Изменить данные пользователя",
                 "Зарегистрировать пользователя",
-                "Удалить аккаунт",
-                "Восстановить аккаунт",
+                "Удалить пользователя",
+                "Восстановить аккаунт пользователя",
                 "Выйти из аккаунта",
                 "Выйти из приложения" };
             ConsoleMenu adminMenu = new ConsoleMenu(functions);

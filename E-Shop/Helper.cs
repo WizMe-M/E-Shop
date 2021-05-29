@@ -38,9 +38,9 @@ namespace E_Shop
             {
                 Console.Clear();
                 Console.WriteLine("Запускаю процесс входа в аккаунт...");
-                Console.WriteLine("\nВведите логин:");
+                Console.WriteLine("Введите логин:");
                 string login = Console.ReadLine().Trim();
-                Console.WriteLine("\nВведите пароль:");
+                Console.WriteLine("Введите пароль:");
                 string password = Console.ReadLine().Trim();
 
                 foreach (Account acc in accounts)
@@ -49,19 +49,20 @@ namespace E_Shop
                     {
                         if (acc.isDeleted)
                             throw new Exception("-- ЭТОТ АККАУНТ БЫЛ УДАЛЁН! --" +
-                                "\nЧтобы войти в этот аккаунт, попросите администратора восстановить его.");
+                                "\nЧтобы войти в систему, аккаунт должен быть рабочим." +
+                                "\nЕсли ваш аккаунт был удалён, обратитесь к администратору, чтобы восстановить его");
 
-                        if (acc.isHired)
-                            throw new Exception("-- ЭТОТ ПОЛЬЗОВАТЕЛЬ БЫЛ УВОЛЕН! --" +
-                                "\nЧтобы войти в этот аккаунт, нужно быть сотрудником предприятия");
+                        if (!acc.isHired)
+                            throw new Exception("-- ЭТОТ СОТРУДНИК БЫЛ УВОЛЕН! --" +
+                                "\nЧтобы войти в аккаунт, нужно быть сотрудником предприятия." +
+                                "\nНанять сотрудника может кадровик");
 
-                        return acc.GetType().Name switch
+                        return acc.Position switch
                         {
                             "Администратор" => (Admin)acc,
                             "Кадровик" => (Personnel)acc,
                             _ => throw new Exception("Что-то пошло не так..." +
-                            "\nСудя по всему, аккаунт с такими данными имеет неправильную роль." +
-                            "\nОбратитесь к администратору, чтобы исправить это."),
+                            "\nСудя по всему, аккаунт имеет неправильные настройки!"),
                         };
 
 
@@ -80,8 +81,7 @@ namespace E_Shop
         {
             BinaryFormatter formatter = new BinaryFormatter();
             using FileStream fileStream = new FileStream(path, FileMode.Truncate);
-            foreach (Account a in accounts)
-                formatter.Serialize(fileStream, a);
+            formatter.Serialize(fileStream, accounts);
             fileStream.Close();
         }
         public static List<Account> GetAllAcounts()

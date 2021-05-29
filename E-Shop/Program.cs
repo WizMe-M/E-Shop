@@ -10,16 +10,13 @@ namespace E_Shop
         static void Main(string[] args)
         {
             List<Account> accounts;
+            Account user;
             Helper.FirstLaunch();
 
-            //начало работы
-            accounts = Helper.GetAllAcounts();
-
-            Account user;
-            //логин в аккаунт (с возможностью перелогиниться)
             do
             {
                 Console.Clear();
+                accounts = Helper.GetAllAcounts();
                 do user = Helper.LoginAccount(accounts);
                 while (user == null);
                 int i;
@@ -31,7 +28,6 @@ namespace E_Shop
                 if (i == -1) break;
             } while (true);
 
-            //конец работы
             Helper.SaveAllAcounts(accounts);
         }
     }

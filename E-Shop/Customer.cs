@@ -4,6 +4,12 @@ using System.Text;
 
 namespace E_Shop
 {
-    class Customer{
+    class Customer : Account
+    {
+        public string Email { get; set; }
+        public override int MainFunction()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
