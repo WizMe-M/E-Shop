@@ -7,13 +7,12 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace E_Shop
 {
-    //Администратор
+    //Администратористратор
     [Serializable]
     class Admin : Account
     {
-        public override string Role { get; } = "Admin";
-        public Admin() : base() { Role = "Admin"; }
-        public Admin(string Login, string Password) : base(Login, Password) { Role = "Admin"; }
+        public Admin() : base() { Position = "Администратор"; }
+        public Admin(string Login, string Password) : base(Login, Password) { Position = "Администратор"; }
 
         //админ регистрирует нового пользователя в базу данных
         void ShowAccount(List<Account> accounts)
@@ -31,7 +30,7 @@ namespace E_Shop
                 Account acc = accounts.Find(chosen => chosen.Login == accLogins[chooseShowAcc]);
 
                 Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine($"Данные аккаунта типа {acc.Role}");
+                Console.WriteLine($"Данные аккаунта {acc.Login}");
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"СТАТУС АККАУНТА - " + (acc.isDeleted ? "удалён" : "активен"));
                 Console.ForegroundColor = acc.isDeleted ? ConsoleColor.DarkGray : ConsoleColor.White;
@@ -47,14 +46,14 @@ namespace E_Shop
         }
         Account RegisterNewAccount()
         {
-            string[] accountTypes = { "Администратор", "Назад" };
+            string[] accountTypes = { "Администратористратор", "Назад" };
             do
             {
                 ConsoleMenu registerMenu = new ConsoleMenu(accountTypes);
                 int choseType = registerMenu.PrintMenu();
                 return choseType switch
                 {
-                    0 => (Admin)Registration("Admin"),
+                    0 => (Admin)Registration("Администратор"),
                     _ => null,
                 };
             } while (true);
@@ -114,7 +113,6 @@ namespace E_Shop
                     "Возраст - " + accounts[index].Age.ToString(),
                     "Образование - " + accounts[index].StudyYears.ToString(),
                     "Опыт работы - " + accounts[index].WorkExperience.ToString(),
-                    "Должность - " + accounts[index].Position,
                     "Зарплата - " + accounts[index].Salary.ToString(),
                     "Назад"
                 };
@@ -148,9 +146,6 @@ namespace E_Shop
                             accounts[index].WorkExperience = int.Parse(changedData);
                             break;
                         case 7:
-                            accounts[index].Position = changedData;
-                            break;
-                        case 8:
                             accounts[index].Salary = double.Parse(changedData);
                             break;
                     }

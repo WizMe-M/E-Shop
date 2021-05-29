@@ -16,9 +16,9 @@ namespace E_Shop
             if (!dir.Exists)
             {
                 Console.WriteLine("Запускаю протокол первичного запуска...");
-                Console.WriteLine($"Зарегистрирован новый пользователь ({nameof(Admin)})");
+                Console.WriteLine($"Зарегистрирован новый пользователь (администратор)");
                 Admin admin = new Admin("admin", "admin");
-                Console.WriteLine($"Логин: {admin.Login}\nПароль: {admin.Password}");
+                Console.WriteLine($"Ваши:\nЛогин - {admin.Login}\nПароль - {admin.Password}");
 
                 dir.Create();
                 dir.CreateSubdirectory("accounts");
@@ -47,22 +47,23 @@ namespace E_Shop
                 {
                     if (login.Equals(acc.Login) && password.Equals(acc.Password))
                     {
-                        if (!acc.isDeleted)
-                        {
-                            return acc.GetType().Name switch
-                            {
-                                "Admin" => (Admin)acc,
-
-                                _ => throw new Exception("Что-то пошло не так..." +
-                                "\nСудя по всему, аккаунт с такими данными имеет неправильную роль." +
-                                "\nОбратитесь к администратору, чтобы исправить это."),
-                            };
-                        }
-                        else
-                        {
+                        if (acc.isDeleted)
                             throw new Exception("-- ЭТОТ АККАУНТ БЫЛ УДАЛЁН! --" +
                                 "\nЧтобы войти в этот аккаунт, попросите администратора восстановить его.");
-                        }
+
+                        if (acc.isHired)
+                            throw new Exception("-- ЭТОТ ПОЛЬЗОВАТЕЛЬ БЫЛ УВОЛЕН! --" +
+                                "\nЧтобы войти в этот аккаунт, нужно быть сотрудником предприятия");
+
+                        return acc.GetType().Name switch
+                        {
+                            "Администратор" => (Admin)acc,
+                            "Кадровик" => (Personnel)acc,
+                            _ => throw new Exception("Что-то пошло не так..." +
+                            "\nСудя по всему, аккаунт с такими данными имеет неправильную роль." +
+                            "\nОбратитесь к администратору, чтобы исправить это."),
+                        };
+
 
                     }
                 }
@@ -91,46 +92,6 @@ namespace E_Shop
             accounts.AddRange((List<Account>)formatter.Deserialize(fileStream));
             fileStream.Close();
             return accounts;
-        }
-        public static int PrintConsoleMenu(string[] menuItems)
-        {
-            ConsoleKeyInfo key;
-            int counter = 0;
-            do
-            {
-                Console.Clear();
-                for (int i = 0; i < menuItems.Length; i++)
-                {
-                    if (counter == i)
-                    {
-                        Console.BackgroundColor = ConsoleColor.Cyan;
-                        Console.ForegroundColor = ConsoleColor.Black;
-                        Console.WriteLine(menuItems[i]);
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        Console.ForegroundColor = ConsoleColor.White;
-                    }
-                    else
-                        Console.WriteLine(menuItems[i]);
-                }
-
-                key = Console.ReadKey(true);
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        counter--;
-                        if (counter == -1)
-                            counter = menuItems.Length - 1;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        counter++;
-                        if (counter == menuItems.Length)
-                            counter = 0;
-                        break;
-                    case ConsoleKey.Enter:
-                        return counter;
-                }
-            }
-            while (true);
         }
         public static bool Check(string s, string type)
         {

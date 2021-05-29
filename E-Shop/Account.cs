@@ -12,7 +12,7 @@ namespace E_Shop
     {
         public bool isDeleted { get; set; } = false;
         public bool isHired { get; set; } = false;
-        public abstract string Role { get; }
+        public string Position { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
         public string LastName { get; set; } = "Не указано";
@@ -32,7 +32,6 @@ namespace E_Shop
         public int StudyYears { get; set; } = 0;
 
         public int WorkExperience { get; set; } = 0;
-        public string Position { get; set; } = "Не указано";
         public string WorkPlace { get; set; } = "Не указано";
         public double Salary { get; set; } = 0;
 
@@ -75,7 +74,7 @@ namespace E_Shop
                 _ => null,
             };
 
-            Console.WriteLine($"Тип аккаунта: {account.Role}");
+            Console.WriteLine($"Тип аккаунта: {account.Position}");
             Console.WriteLine($"Логин: {account.Login}\nПароль: {account.Password}");
             Console.WriteLine("Нажмите любую клавишу, чтобы добавить данный аккаунт в базу данных...");
             Console.ReadKey();
