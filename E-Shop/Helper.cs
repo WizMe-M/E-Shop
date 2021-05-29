@@ -34,33 +34,63 @@ namespace E_Shop
         }
         public static Account LoginAccount(List<Account> accounts)
         {
-
-            Console.Clear();
-            Console.WriteLine("Запускаю процесс входа в аккаунт...");
-            Console.WriteLine("\nВведите логин:");
-            string login = Console.ReadLine().Trim();
-            Console.WriteLine("\nВведите пароль:");
-            string password = Console.ReadLine().Trim();
-
-
-            foreach (Account acc in accounts)
+            try
             {
-                if (login.Equals(acc.Login) && password.Equals(acc.Password))
+                Console.Clear();
+                Console.WriteLine("Запускаю процесс входа в аккаунт...");
+                Console.WriteLine("\nВведите логин:");
+                string login = Console.ReadLine().Trim();
+                Console.WriteLine("\nВведите пароль:");
+                string password = Console.ReadLine().Trim();
+
+                foreach (Account acc in accounts)
                 {
-                    switch (acc.GetType().Name)
+                    if (login.Equals(acc.Login) && password.Equals(acc.Password))
                     {
-                        case "Admin":
-                            Admin admin = (Admin)acc;
-                            return admin;
-                        default:
-                            return null;
+                        if (!acc.isDeleted)
+                        {
+                            return acc.GetType().Name switch
+                            {
+                                "Admin" => (Admin)acc,
+
+                                _ => throw new Exception("Что-то пошло не так..." +
+                                "\nСудя по всему, аккаунт с такими данными имеет неправильную роль." +
+                                "\nОбратитесь к администратору, чтобы исправить это."),
+                            };
+                        }
+                        else
+                        {
+                            throw new Exception("-- ЭТОТ АККАУНТ БЫЛ УДАЛЁН! --" +
+                                "\nЧтобы войти в этот аккаунт, попросите администратора восстановить его.");
+                        }
+
                     }
                 }
+                throw new Exception("Аккаунта с такими данными не существует!");
             }
-            Console.WriteLine("Аккаунта с такими данными не существует!");
-            Console.WriteLine("Нажмите любую кнопку, чтобы попробовать войти ещё раз...");
-            Console.ReadKey();
-            return null;
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.ReadKey();
+                return null;
+            }
+        }
+        public static void SaveAllAcounts(List<Account> accounts)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(path, FileMode.Truncate);
+            foreach (Account a in accounts)
+                formatter.Serialize(fileStream, a);
+            fileStream.Close();
+        }
+        public static List<Account> GetAllAcounts()
+        {
+            List<Account> accounts = new List<Account>();
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(path, FileMode.Open);
+            accounts.AddRange((List<Account>)formatter.Deserialize(fileStream));
+            fileStream.Close();
+            return accounts;
         }
         public static int PrintConsoleMenu(string[] menuItems)
         {

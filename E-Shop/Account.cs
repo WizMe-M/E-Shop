@@ -10,8 +10,8 @@ namespace E_Shop
     [Serializable]
     abstract class Account
     {
-        public bool isDeleted { get; set; }
-        public bool isHired { get; set; }
+        public bool isDeleted { get; set; } = false;
+        public bool isHired { get; set; } = false;
         public abstract string Role { get; }
         public string Login { get; set; }
         public string Password { get; set; }
@@ -36,38 +36,51 @@ namespace E_Shop
         public string WorkPlace { get; set; } = "Не указано";
         public double Salary { get; set; } = 0;
 
-        //первичная регистрация аккаунта
-        public static Account RegisterNewAccount(string role)
+        public Account() 
         {
-            Console.WriteLine($"Запускаю процесс регистрации аккаунта типа \"{role}\"...");
+            birthday = DateTime.Now.ToShortDateString();
+            age = 0;
+            study = 0;
+        }
+        public Account(string Login, string Password) : this()
+        {
+            this.Login = Login;
+            this.Password = Password;
+        }
+
+        //первичная регистрация аккаунта
+        public static Account Registration(string role)
+        {
+            Console.WriteLine($"Аккаунт типа \"{role}\"");
             Thread.Sleep(2000);
             Console.Clear();
 
             Console.WriteLine("Введите логин: ");
             string l;
-            do l = Console.ReadLine();
-            while (Helper.Check(l, "логин"));
-            Console.Clear();
+            l = Console.ReadLine();
+            //do l = Console.ReadLine();
+            ////while (Helper.Check(l, "логин"));
+            //Console.Clear();
             Console.WriteLine("Введите пароль: ");
             string p;
-            do p = Console.ReadLine();
-            while (Helper.Check(p, "пароль"));
+            p = Console.ReadLine();
+            //do p = Console.ReadLine();
+            //while (Helper.Check(p, "пароль"));
 
             Console.Clear();
             Console.WriteLine("Регистрация завершена");
-            Account account = null;
-            switch (role)
+            Account account = role switch
             {
-                case "Admin":
-                    account = new Admin(l, p);
-                    break;
-            }
+                "Admin" => new Admin(l,p),
+                _ => null,
+            };
+
             Console.WriteLine($"Тип аккаунта: {account.Role}");
             Console.WriteLine($"Логин: {account.Login}\nПароль: {account.Password}");
-            Console.WriteLine("Нажмите любую клавишу...");
+            Console.WriteLine("Нажмите любую клавишу, чтобы добавить данный аккаунт в базу данных...");
             Console.ReadKey();
             return account;
         }
-        public abstract int MainFunction(List<Account> accounts);
+        public abstract int MainFunction();
     }
 }

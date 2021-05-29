@@ -5,11 +5,12 @@ using System.Threading;
 
 namespace E_Shop
 {
+    //Кадровик
     class Personnel : Account
     {
         public override string Role { get; } = nameof(Personnel);
 
-        public override int MainFunction(List<Account> accounts)
+        public override int MainFunction()
         {
             return 0;
         }
