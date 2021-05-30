@@ -9,15 +9,12 @@ namespace E_Shop
     {
         static void Main(string[] args)
         {
-            List<Account> accounts;
             Account user;
             Helper.FirstLaunch();
-
             do
             {
                 Console.Clear();
-                accounts = Helper.GetAllAcounts();
-                do user = Helper.LoginAccount(accounts);
+                do user = Helper.LoginAccount();
                 while (user == null);
                 int i;
                 do
@@ -27,8 +24,6 @@ namespace E_Shop
                 while (i == 0);
                 if (i == -1) break;
             } while (true);
-
-            Helper.SaveAllAcounts(accounts);
         }
     }
 }

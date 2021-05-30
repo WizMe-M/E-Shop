@@ -9,7 +9,8 @@ namespace E_Shop
 {
     static class Helper
     {
-        public static string path = Directory.GetCurrentDirectory() + @"\E-Shop\accounts\database.bd";
+        public static string pathAccounts = Directory.GetCurrentDirectory() + @"\E-Shop\database.bd";
+        public static string pathStorage = Directory.GetCurrentDirectory() + @"\E-Shop\storage.bd";
         public static void FirstLaunch()
         {
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\E-Shop");
@@ -18,13 +19,13 @@ namespace E_Shop
                 Console.WriteLine("Запускаю протокол первичного запуска...");
                 Console.WriteLine($"Зарегистрирован новый пользователь (администратор)");
                 Admin admin = new Admin("admin", "admin");
-                Console.WriteLine($"Ваши:\nЛогин - {admin.Login}\nПароль - {admin.Password}");
+                Console.WriteLine($"Ваши:\nЛогин\t- {admin.Login}\nПароль\t- {admin.Password}");
 
                 dir.Create();
-                dir.CreateSubdirectory("accounts");
+                dir.CreateSubdirectory("storages");
                 List<Account> accounts = new List<Account>() { admin };
                 BinaryFormatter formatter = new BinaryFormatter();
-                using FileStream fileStream = new FileStream(path, FileMode.OpenOrCreate);
+                using FileStream fileStream = new FileStream(pathAccounts, FileMode.OpenOrCreate);
                 formatter.Serialize(fileStream, accounts);
                 fileStream.Close();
                 Console.WriteLine("Все аккаунты сериализованы!");
@@ -32,10 +33,11 @@ namespace E_Shop
                 Console.ReadKey();
             }
         }
-        public static Account LoginAccount(List<Account> accounts)
+        public static Account LoginAccount()
         {
             try
             {
+                List<Account> accounts = GetAllAcounts();
                 Console.Clear();
                 Console.WriteLine("Запускаю процесс входа в аккаунт...");
                 Console.WriteLine("Введите логин:");
@@ -54,13 +56,15 @@ namespace E_Shop
 
                         if (!acc.isHired)
                             throw new Exception("-- ЭТОТ СОТРУДНИК БЫЛ УВОЛЕН! --" +
-                                "\nЧтобы войти в аккаунт, нужно быть сотрудником предприятия." +
-                                "\nНанять сотрудника может кадровик");
+                                "\nЧтобы войти в систему, нужно быть сотрудником предприятия или покупателем." +
+                                "\nНанять сотрудника может кадровик, а зарегистрироваться" +
+                                " - самостоятельно или с помощью администратора");
 
                         return acc.Position switch
                         {
                             "Администратор" => (Admin)acc,
                             "Кадровик" => (Personnel)acc,
+                            "Кладовщик" => (Warehouseman)acc,
                             _ => throw new Exception("Что-то пошло не так..." +
                             "\nСудя по всему, аккаунт имеет неправильные настройки!"),
                         };
@@ -77,10 +81,27 @@ namespace E_Shop
                 return null;
             }
         }
+        public static void SerializeStorage(List<Storage> storage)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(pathStorage, FileMode.Truncate);
+            formatter.Serialize(fileStream, storage);
+            fileStream.Close();
+        }
+        public static List<Storage> DeserializeStorage()
+        {
+            List<Storage> storage = null;
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(pathStorage, FileMode.OpenOrCreate);
+            if (fileStream.Length != 0)
+                storage = (List<Storage>)formatter.Deserialize(fileStream);
+            fileStream.Close();
+            return storage;
+        }
         public static void SaveAllAcounts(List<Account> accounts)
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            using FileStream fileStream = new FileStream(path, FileMode.Truncate);
+            using FileStream fileStream = new FileStream(pathAccounts, FileMode.Truncate);
             formatter.Serialize(fileStream, accounts);
             fileStream.Close();
         }
@@ -88,11 +109,16 @@ namespace E_Shop
         {
             List<Account> accounts = new List<Account>();
             BinaryFormatter formatter = new BinaryFormatter();
-            using FileStream fileStream = new FileStream(path, FileMode.Open);
-            accounts.AddRange((List<Account>)formatter.Deserialize(fileStream));
+            using FileStream fileStream = new FileStream(pathAccounts, FileMode.Open);
+            if (fileStream.Length != 0)
+                accounts = ((List<Account>)formatter.Deserialize(fileStream));
             fileStream.Close();
             return accounts;
         }
+
+
+
+        ///delete this shit
         public static bool Check(string s, string type)
         {
             //эти проверки должны быть в свойствах Account

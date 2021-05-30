@@ -10,6 +10,7 @@ namespace E_Shop
     [Serializable]
     abstract class Account
     {
+        public static string[] accountTypes = { "Администратор", "Кадровик", "Кладовщик", "Назад" };
         public bool isDeleted { get; set; } = false;
         public bool isHired { get; set; } = true;
         public string Position { get; set; }
@@ -33,10 +34,10 @@ namespace E_Shop
         public int WorkExperience { get; set; } = 0;
         [NonSerialized]
         string place;
-        public string WorkPlace 
-        { 
-            get { return place; } 
-            set 
+        public string WorkPlace
+        {
+            get { return place; }
+            set
             {
                 if (this is Admin || this is Personnel)
                     place = "Офис";
@@ -45,7 +46,7 @@ namespace E_Shop
         }
         public double Salary { get; set; } = 0;
 
-        public Account() 
+        public Account()
         {
             birthday = DateTime.Now.ToShortDateString();
             age = 0;
@@ -67,19 +68,13 @@ namespace E_Shop
             string l = Console.ReadLine();
             Console.WriteLine("Введите пароль: ");
             string p = Console.ReadLine();
-            Console.Clear();
-            Console.WriteLine("Регистрация завершена");
             Account account = role switch
             {
-                "Администратор" => new Admin(l,p),
-                "Кадровик" => new Personnel(l,p),
+                "Администратор" => new Admin(l, p),
+                "Кадровик" => new Personnel(l, p),
+                "Кладовщик" => new Warehouseman(l, p),
                 _ => null,
             };
-
-            Console.WriteLine($"Тип аккаунта: {account.Position}");
-            Console.WriteLine($"Логин: {account.Login}\nПароль: {account.Password}");
-            Console.WriteLine("Нажмите любую клавишу, чтобы добавить данный аккаунт в базу данных...");
-            Console.ReadKey();
             return account;
         }
         public abstract int MainMenu();
