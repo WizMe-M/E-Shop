@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace E_Shop
 {
@@ -51,6 +52,39 @@ namespace E_Shop
             ConsoleMenu categoryMenu = new ConsoleMenu(categories);
             int chooseCategory = categoryMenu.PrintMenu();
             Category = categories[chooseCategory];
+        }
+        public int ChooseCountOfProducts()
+        {
+            int count = 1;
+            while (true)
+            {
+                Console.WriteLine($"Товар {Name} | Цена: {Price} | Срок годности до: {ShelfLife}");
+                Console.Write("Нажимайте на стрелки, чтобы изменить количество товара:\t"+count);
+                ConsoleKeyInfo key = Console.ReadKey();
+                switch (key.Key)
+                {
+                    case ConsoleKey.UpArrow:
+                        count++;
+                        if (count > Count)
+                        {
+                            count = Count;
+                            Console.WriteLine("Максимум товаров!");
+                            Thread.Sleep(1000);
+                        }
+                        break;
+                    case ConsoleKey.DownArrow:
+                        count--;
+                        if (count < 1)
+                        {
+                            count = 1;
+                            Console.WriteLine("Минимум товаров!");
+                            Thread.Sleep(1000);
+                        }
+                        break;
+                    case ConsoleKey.Enter:
+                        return count;
+                }
+            }
         }
     }
 }

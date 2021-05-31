@@ -26,7 +26,7 @@ namespace E_Shop
         {
             while(true)
             {
-                List<Account> accounts = Helper.GetAllAcounts();
+                List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accLogins = new List<string>();
                 foreach (Account a in accounts)
                     accLogins.Add(a.Login);
@@ -64,7 +64,7 @@ namespace E_Shop
         {
             while (true)
             {
-                List<Account> accounts = Helper.GetAllAcounts();
+                List<Account> accounts = Helper.DeserializeAccount();
                 ConsoleMenu registerMenu = new ConsoleMenu(accountTypes);
                 int chooseType = registerMenu.PrintMenu();
                 
@@ -73,14 +73,14 @@ namespace E_Shop
                 Account newAccount = Registration(accountTypes[chooseType]);
                 if (newAccount != null)
                     accounts.Add(newAccount);
-                Helper.SaveAllAcounts(accounts);
+                Helper.SerializeAccount(accounts);
             }
         }
         void ChangeAccountDeleteStatus(bool toDeleteStatus)
         {
             while (true)
             {
-                List<Account> accounts = Helper.GetAllAcounts();
+                List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accountList = new List<string>();
                 if (toDeleteStatus)
                 {
@@ -109,7 +109,7 @@ namespace E_Shop
                 if (choseDeleteAcc == accountList.Count - 1) break;
                 int index = accounts.FindIndex(deleted => deleted.Login == accountList[choseDeleteAcc]);
                 accounts[index].isDeleted = toDeleteStatus;
-                Helper.SaveAllAcounts(accounts);
+                Helper.SerializeAccount(accounts);
                 Console.WriteLine($"Аккаунт {accounts[index].Login} {(accounts[index].isDeleted ? "удалён" : "восстановлен")}!");
                 Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
                 Console.ReadKey();
@@ -119,7 +119,7 @@ namespace E_Shop
         {          
             while (true)
             {
-                List<Account> accounts = Helper.GetAllAcounts();
+                List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accLogins = new List<string>();
                 foreach (Account a in accounts)
                     accLogins.Add(a.Login);
@@ -183,7 +183,7 @@ namespace E_Shop
                             accounts[index].WorkExperience = int.Parse(changedData);
                             break;
                     }
-                    Helper.SaveAllAcounts(accounts);
+                    Helper.SerializeAccount(accounts);
                 }
             }
         }

@@ -9,12 +9,10 @@ namespace E_Shop
     {
         public string Name { get; set; }
         public List<Product> Products { get; set; }
-        public string AttachedShop { get; set; }
         public Storage(string Name)
         {
             this.Name = Name;
             Products = new List<Product>();
-            AttachedShop = "Магазин";
-        }        
+        }
     }
 }

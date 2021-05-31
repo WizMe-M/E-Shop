@@ -9,21 +9,43 @@ namespace E_Shop
     {
         static void Main(string[] args)
         {
-            Account user;
+            Account user = null;
             Helper.FirstLaunch();
-            do
+            ConsoleMenu RegisterOrLoginMenu = new ConsoleMenu(new string[]
+            { "Зарегистрироваться", "Войти в аккаунт", "Выйти из приложения" });
+
+            while (true)
             {
                 Console.Clear();
-                do user = Helper.LoginAccount();
-                while (user == null);
-                int i;
-                do
+                int choose = RegisterOrLoginMenu.PrintMenu();
+                switch (choose)
                 {
-                    i = user.MainMenu();
+                    case 0:
+                        user = Account.Registration("Покупатель");
+                        break;
+                    case 1:
+                        user = Helper.LoginAccount();
+                        break;
+                    case 2:
+                        return;
                 }
+                int i;
+                
+                do i = user.MainMenu();
                 while (i == 0);
-                if (i == -1) break;
-            } while (true);
+                if (i == -1) Terminate();
+            }
+        }
+
+        static void MainMenu(Account account)
+        {
+
+        }
+
+        //заготовка на переделку главной функции акков (неплохо бы делегаты для них сделать....)
+        public static void Terminate()
+        {
+            Environment.Exit(0);
         }
     }
 }

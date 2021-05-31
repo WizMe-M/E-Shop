@@ -53,7 +53,7 @@ namespace E_Shop
                 }
                 List<string> storagesName = new List<string>();
                 for (int i = 0; i < storages.Count; i++)
-                    storagesName.Add($"Склад №{i + 1} - {storages[i].Name} | Магазин - {storages[i].AttachedShop}");
+                    storagesName.Add($"Склад №{i + 1} - {storages[i].Name}");
                 storagesName.Add("Назад");
 
                 ConsoleMenu storageMenu = new ConsoleMenu(storagesName.ToArray());
@@ -107,7 +107,7 @@ namespace E_Shop
                 }
                 List<string> storagesName = new List<string>();
                 for (int i = 0; i < storages.Count; i++)
-                    storagesName.Add($"Склад №{i + 1} - {storages[i].Name} | Магазин - {storages[i].AttachedShop}");
+                    storagesName.Add($"Склад №{i + 1} - {storages[i].Name}");
                 storagesName.Add("Назад");
 
                 ConsoleMenu storageMenu = new ConsoleMenu(storagesName.ToArray());
@@ -156,7 +156,7 @@ namespace E_Shop
             }
 
             //выбираем товар
-            Console.Clear(); 
+            Console.Clear();
             Console.WriteLine("Выберите товар, который хотите переместить");
             Console.WriteLine("Нажмите любую кнопку...");
             Console.ReadKey();
@@ -179,7 +179,11 @@ namespace E_Shop
             //перемещаем товар
             Product movableProduct = storages[index1].Products[chooseProduct];
             storages[index1].Products.Remove(movableProduct);
-            storages[index2].Products.Add(movableProduct);
+            int prIndex = storages[index2].Products.FindIndex(p => p.Name == movableProduct.Name && p.Category == movableProduct.Category && p.Price == movableProduct.Price && p.ShelfLife == movableProduct.ShelfLife);
+            if (prIndex != -1)
+                storages[index2].Products[prIndex].Count += movableProduct.Count;
+            else
+                storages[index2].Products.Add(movableProduct);
 
             Helper.SerializeStorage(storages);
         }
@@ -197,7 +201,7 @@ namespace E_Shop
                 }
                 List<string> storagesName = new List<string>();
                 for (int i = 0; i < storages.Count; i++)
-                    storagesName.Add($"Склад №{i + 1} - {storages[i].Name} | Магазин - {storages[i].AttachedShop}");
+                    storagesName.Add($"Склад №{i + 1} - {storages[i].Name}");
                 storagesName.Add("Назад");
 
                 ConsoleMenu storageMenu = new ConsoleMenu(storagesName.ToArray());
@@ -281,7 +285,7 @@ namespace E_Shop
                 }
                 List<string> storagesName = new List<string>();
                 for (int i = 0; i < storages.Count; i++)
-                    storagesName.Add($"Склад №{i + 1} - {storages[i].Name} | Магазин - {storages[i].AttachedShop}");
+                    storagesName.Add($"Склад №{i + 1} - {storages[i].Name} ");
                 storagesName.Add("Назад");
 
                 ConsoleMenu storageMenu = new ConsoleMenu(storagesName.ToArray());

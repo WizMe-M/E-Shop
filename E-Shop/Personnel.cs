@@ -24,7 +24,7 @@ namespace E_Shop
         {
             while (true)
             {
-                List<Account> accounts = Helper.GetAllAcounts();
+                List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accLogins = new List<string>();
                 foreach (Account a in accounts)
                     if (!a.isDeleted && !(a is Customer))
@@ -61,7 +61,7 @@ namespace E_Shop
         {
             while (true)
             {
-                List<Account> accounts = Helper.GetAllAcounts();
+                List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accLogins = new List<string>();
                 foreach (Account a in accounts)
                     if (!a.isDeleted && !(a is Customer))
@@ -125,7 +125,7 @@ namespace E_Shop
                             accounts[index].Salary = double.Parse(changedData);
                             break;
                     }
-                    Helper.SaveAllAcounts(accounts);
+                    Helper.SerializeAccount(accounts);
                 }
             }
         }
@@ -133,7 +133,7 @@ namespace E_Shop
         {
             while (true)
             {
-                List<Account> accounts = Helper.GetAllAcounts();
+                List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accountList = new List<string>();
 
                 foreach (Account a in accounts)
@@ -163,14 +163,14 @@ namespace E_Shop
                 int posNumber = positionMenu.PrintMenu();
                 newPosition.Position = positions[posNumber];
                 accounts.Add(newPosition);
-                Helper.SaveAllAcounts(accounts);
+                Helper.SerializeAccount(accounts);
             }
         }
         void ChangeHireStatus(bool toHireStatus)
         {
             while (true)
             {
-                List<Account> accounts = Helper.GetAllAcounts();
+                List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accountList = new List<string>();
                 if (toHireStatus)
                 {
@@ -200,7 +200,7 @@ namespace E_Shop
                 if (choseDeleteAcc == accountList.Count - 1) break;
                 int index = accounts.FindIndex(deleted => deleted.Login == accountList[choseDeleteAcc]);
                 accounts[index].isHired = toHireStatus;
-                Helper.SaveAllAcounts(accounts);
+                Helper.SerializeAccount(accounts);
                 Console.WriteLine($"Аккаунт {accounts[index].Login} " + (accounts[index].isHired ? "нанят" : "уволен") + "!");
                 Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
                 Console.ReadKey();

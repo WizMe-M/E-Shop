@@ -20,19 +20,15 @@ namespace E_Shop
         public string FirstName { get; set; } = "Не указано";
         public string Patronomic { get; set; } = "Не указано";
 
-        [NonSerialized]
         string birthday;
         public DateTime BirthdayDate { get; set; } = DateTime.Now;
 
-        [NonSerialized]
         int age;
         public int Age { get; set; } = 0;
 
-        [NonSerialized]
         int study;
         public int StudyYears { get; set; } = 0;
         public int WorkExperience { get; set; } = 0;
-        [NonSerialized]
         string place;
         public string WorkPlace
         {
@@ -60,10 +56,6 @@ namespace E_Shop
 
         public static Account Registration(string role)
         {
-            Console.WriteLine($"Аккаунт типа \"{role}\"");
-            Thread.Sleep(2000);
-            Console.Clear();
-
             Console.WriteLine("Введите логин: ");
             string l = Console.ReadLine();
             Console.WriteLine("Введите пароль: ");
@@ -73,6 +65,7 @@ namespace E_Shop
                 "Администратор" => new Admin(l, p),
                 "Кадровик" => new Personnel(l, p),
                 "Кладовщик" => new Warehouseman(l, p),
+                "Покупатель" => new Customer(l, p),
                 _ => null,
             };
             return account;

@@ -7,10 +7,25 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 namespace E_Shop
 {
+
     static class Helper
     {
         public static string pathAccounts = Directory.GetCurrentDirectory() + @"\E-Shop\database.bd";
         public static string pathStorage = Directory.GetCurrentDirectory() + @"\E-Shop\storage.bd";
+        public static string pathReceipt = Directory.GetCurrentDirectory() + @"\E-Shop\receipt.bd";
+        public static string pathShop = Directory.GetCurrentDirectory() + @"\E-Shop\shop.bd";
+     
+        public static int SafeParse(this string s)
+        {
+            int i;
+            do
+            {
+                int.TryParse(s, out int res);
+                i = res;
+            } while (i == 0);
+            return i;
+        }
+
         public static void FirstLaunch()
         {
             DirectoryInfo dir = new DirectoryInfo(Directory.GetCurrentDirectory() + @"\E-Shop");
@@ -22,7 +37,6 @@ namespace E_Shop
                 Console.WriteLine($"Ваши:\nЛогин\t- {admin.Login}\nПароль\t- {admin.Password}");
 
                 dir.Create();
-                dir.CreateSubdirectory("storages");
                 List<Account> accounts = new List<Account>() { admin };
                 BinaryFormatter formatter = new BinaryFormatter();
                 using FileStream fileStream = new FileStream(pathAccounts, FileMode.OpenOrCreate);
@@ -37,7 +51,7 @@ namespace E_Shop
         {
             try
             {
-                List<Account> accounts = GetAllAcounts();
+                List<Account> accounts = DeserializeAccount();
                 Console.Clear();
                 Console.WriteLine("Запускаю процесс входа в аккаунт...");
                 Console.WriteLine("Введите логин:");
@@ -81,6 +95,50 @@ namespace E_Shop
                 return null;
             }
         }
+
+        
+
+
+        public static List<Shop> DeserializeShops()
+        {
+            List<Shop> shops = new List<Shop>();
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(pathStorage, FileMode.OpenOrCreate);
+            if (fileStream.Length != 0)
+                shops = (List<Shop>)formatter.Deserialize(fileStream);
+            fileStream.Close();
+            return shops;
+        }
+        public static void SerializeShops(List<Shop> shops)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(pathShop, FileMode.Truncate);
+            formatter.Serialize(fileStream, shops);
+            fileStream.Close();
+        }
+        public static List<Receipt> DeserializeReceipt()
+        {
+            List<Receipt> receipts = new List<Receipt>();
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(pathReceipt, FileMode.OpenOrCreate);
+            if (fileStream.Length != 0)
+                receipts = (List<Receipt>)formatter.Deserialize(fileStream);
+            fileStream.Close();
+            return receipts;
+        }
+        public static void SerializeReceipt(Shop shop, Customer customer)
+        {
+            List<Receipt> receipts = DeserializeReceipt();
+            receipts.Add(new Receipt(customer, shop));
+            SerializeReceipt(receipts);
+        }
+        public static void SerializeReceipt(List<Receipt> receipts)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(pathStorage, FileMode.Truncate);
+            formatter.Serialize(fileStream, receipts);
+            fileStream.Close();
+        }
         public static void SerializeStorage(List<Storage> storage)
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -90,22 +148,22 @@ namespace E_Shop
         }
         public static List<Storage> DeserializeStorage()
         {
-            List<Storage> storage = new List<Storage>();
+            List<Storage> storages = new List<Storage>();
             BinaryFormatter formatter = new BinaryFormatter();
             using FileStream fileStream = new FileStream(pathStorage, FileMode.OpenOrCreate);
             if (fileStream.Length != 0)
-                storage = (List<Storage>)formatter.Deserialize(fileStream);
+                storages = (List<Storage>)formatter.Deserialize(fileStream);
             fileStream.Close();
-            return storage;
+            return storages;
         }
-        public static void SaveAllAcounts(List<Account> accounts)
+        public static void SerializeAccount(List<Account> accounts)
         {
             BinaryFormatter formatter = new BinaryFormatter();
             using FileStream fileStream = new FileStream(pathAccounts, FileMode.Truncate);
             formatter.Serialize(fileStream, accounts);
             fileStream.Close();
         }
-        public static List<Account> GetAllAcounts()
+        public static List<Account> DeserializeAccount()
         {
             List<Account> accounts = new List<Account>();
             BinaryFormatter formatter = new BinaryFormatter();
