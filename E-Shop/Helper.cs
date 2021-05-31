@@ -90,7 +90,7 @@ namespace E_Shop
         }
         public static List<Storage> DeserializeStorage()
         {
-            List<Storage> storage = null;
+            List<Storage> storage = new List<Storage>();
             BinaryFormatter formatter = new BinaryFormatter();
             using FileStream fileStream = new FileStream(pathStorage, FileMode.OpenOrCreate);
             if (fileStream.Length != 0)
