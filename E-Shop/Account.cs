@@ -10,11 +10,14 @@ namespace E_Shop
     [Serializable]
     abstract class Account
     {
+        [NonSerialized]
         public static string[] accountTypes = { "Покупатель", "Администратор", "Кадровик", "Кладовщик", "Продавец", "Назад" };
         public delegate void Method();
-        public List<(string, Method)> Functions { get; }
-        public bool isDeleted = false;
-        public bool isHired = true;
+
+        [NonSerialized]
+        public List<(string, Method)> Functions = new List<(string, Method)>();
+        public bool isDeleted { get; set; } = false;
+        public bool isHired { get; set; } = true;
         public string Position { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
@@ -46,6 +49,7 @@ namespace E_Shop
 
         public Account()
         {
+            Functions = new List<(string, Method)>();
             birthday = DateTime.Now.ToShortDateString();
             age = 0;
             study = 0;
@@ -56,6 +60,7 @@ namespace E_Shop
             this.Password = Password;
         }
 
+        public abstract void OnDeserializing();
         public static Account Registration(string role)
         {
             Console.Clear();

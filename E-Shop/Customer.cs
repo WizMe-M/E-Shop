@@ -30,14 +30,12 @@ namespace E_Shop
         public Customer(string Login, string Password) : base(Login, Password)
         {
             Position = "Покупатель";
-            Functions.AddRange(new (string, Method)[]
-            {
+            Functions.AddRange(new (string, Method)[] {
                 ("Просмотреть информацию о себе", ShowSelf),
                 ("Добавить товар в корзину", AddProduct),
                 ("Изменить количество товара в корзине", EditCount),
                 ("Убрать товар из корзины", RemoveProduct),
-                ("Оформить заказ", FinalizeOrder)
-            });
+                ("Оформить заказ", FinalizeOrder)});
             Console.Clear();
             Console.WriteLine("Введите электронный адрес, на который хотите получать чеки:");
             Email = Console.ReadLine().Trim();
@@ -190,5 +188,17 @@ namespace E_Shop
             Console.WriteLine("Нажмите любую кнопку...");
             Console.ReadKey();
         }
+
+        public override void OnDeserializing()
+        {
+            Functions = new List<(string, Method)>();
+            Functions.AddRange(new (string, Method)[] {
+                ("Просмотреть информацию о себе", ShowSelf),
+                ("Добавить товар в корзину", AddProduct),
+                ("Изменить количество товара в корзине", EditCount),
+                ("Убрать товар из корзины", RemoveProduct),
+                ("Оформить заказ", FinalizeOrder)});
+        }
+
     }
 }

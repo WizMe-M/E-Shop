@@ -13,14 +13,12 @@ namespace E_Shop
         {
             Position = "Кадровик";
             WorkPlace = "Офис";
-            Functions.AddRange(new (string, Method)[]
-            {
+            Functions.AddRange(new (string, Method)[] {
                 ("Просмотреть данные сотрудников", ShowUsers),
                 ("Изменить данные сотрудников", EditUsers),
                 ("Нанять сотрудника", HireUser),
                 ("Уволить сотрудника", FireUser),
-                ("Перевести сотрудника на другую должность", TransferToNewPosition)
-            });
+                ("Перевести сотрудника на другую должность", TransferToNewPosition)});
         }
 
         private void ShowUsers()
@@ -256,5 +254,16 @@ namespace E_Shop
 
             accounts.Insert(index, AccountNewPosition);
         }
+        public override void OnDeserializing()
+        {
+            Functions = new List<(string, Method)>();
+            Functions.AddRange(new (string, Method)[] {
+                ("Просмотреть данные сотрудников", ShowUsers),
+                ("Изменить данные сотрудников", EditUsers),
+                ("Нанять сотрудника", HireUser),
+                ("Уволить сотрудника", FireUser),
+                ("Перевести сотрудника на другую должность", TransferToNewPosition)});
+        }
+
     }
 }

@@ -22,7 +22,6 @@ namespace E_Shop
                     ("Удалить пользователя", DeleteAccount),
                     ("Восстановить пользователя", RestoreAccount)});
         }
-
         void ShowAccount()
         {
             while (true)
@@ -220,6 +219,17 @@ namespace E_Shop
                     Helper.SerializeAccount(accounts);
                 }
             }
+        }
+
+        public override void OnDeserializing()
+        {
+            Functions = new List<(string, Method)>();
+            Functions.AddRange(new (string, Method)[] {
+                    ("Просмотреть данные пользователя", ShowAccount),
+                    ("Изменить данные пользователя", EditAccount),
+                    ("Зарегистрировать пользователя", RegisterNewAccount),
+                    ("Удалить пользователя", DeleteAccount),
+                    ("Восстановить пользователя", RestoreAccount)});
         }
     }
 }
