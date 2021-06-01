@@ -175,6 +175,8 @@ namespace E_Shop
             if (fileStream.Length != 0)
                 accounts = ((List<Account>)formatter.Deserialize(fileStream));
             fileStream.Close();
+            for (int i = 0; i < accounts.Count; i++)
+                accounts[i].OnDeserializing();
             return accounts;
         }
 

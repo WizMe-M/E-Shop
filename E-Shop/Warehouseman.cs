@@ -14,15 +14,13 @@ namespace E_Shop
         {
             Position = "Кладовщик";
             WorkPlace = "Не указано";
-            Functions.AddRange(new (string, Method)[]
-            {
+            Functions.AddRange(new (string, Method)[] {
                 ("Создать склад", CreateStorage),
                 ("Просмотреть товар", ShowProduct),
                 ("Добавить новый товар на склад", AddProductToStorage),
                 ("Переместить товар с одного склада на другой", MoveProduct),
                 ("Изменить данные о товаре на складе", EditProduct),
-                ("Забраковать товар (удалить товар со склада)", DeffectProduct)
-            });
+                ("Забраковать товар (удалить товар со склада)", DeffectProduct)});
         }
         private void CreateStorage()
         {
@@ -308,6 +306,17 @@ namespace E_Shop
                 }
             }
 
+        }
+        public override void OnDeserializing()
+        {
+            Functions = new List<(string, Method)>();
+            Functions.AddRange(new (string, Method)[] {
+                ("Создать склад", CreateStorage),
+                ("Просмотреть товар", ShowProduct),
+                ("Добавить новый товар на склад", AddProductToStorage),
+                ("Переместить товар с одного склада на другой", MoveProduct),
+                ("Изменить данные о товаре на складе", EditProduct),
+                ("Забраковать товар (удалить товар со склада)", DeffectProduct)});
         }
     }
 }

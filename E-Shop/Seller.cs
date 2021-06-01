@@ -11,12 +11,10 @@ namespace E_Shop
     {
         public Seller(string Login, string Password) : base(Login, Password)
         {
-            Functions.AddRange(new (string, Method)[]
-            {
-                ("Добавить магазин", AddShop),
-                ("Оформить квитанцию", Checkout)
-            });
             Position = "Продавец";
+            Functions.AddRange(new (string, Method)[] {
+                ("Добавить магазин", AddShop),
+                ("Оформить квитанцию", Checkout)});
             AddShop();
             WorkPlace = Helper.ChooseShop().Name;
         }
@@ -62,5 +60,13 @@ namespace E_Shop
                 Console.ReadKey();
             }
         }
+        public override void OnDeserializing()
+        {
+            Functions = new List<(string, Method)>();
+            Functions.AddRange(new (string, Method)[] {
+                ("Добавить магазин", AddShop),
+                ("Оформить квитанцию", Checkout)});
+        }
+
     }
 }
