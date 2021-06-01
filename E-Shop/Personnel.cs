@@ -9,11 +9,6 @@ namespace E_Shop
     [Serializable]
     class Personnel : Account
     {
-        public Personnel() : base()
-        {
-            Position = "Кадровик";
-            WorkPlace = "Офис";
-        }
         public Personnel(string Login, string Password) : base(Login, Password)
         {
             Position = "Кадровик";

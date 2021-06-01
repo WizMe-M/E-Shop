@@ -112,6 +112,12 @@ namespace E_Shop
             fileStream.Close();
             return shops;
         }
+        public static void AddShopToBD(Shop shop)
+        {
+            List<Shop> shops = DeserializeShops();
+            shops.Add(shop);
+            SerializeShops(shops);
+        }
         public static void SerializeShops(List<Shop> shops)
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -119,6 +125,7 @@ namespace E_Shop
             formatter.Serialize(fileStream, shops);
             fileStream.Close();
         }
+
         public static List<Receipt> DeserializeReceipt()
         {
             List<Receipt> receipts = new List<Receipt>();
@@ -142,12 +149,19 @@ namespace E_Shop
             formatter.Serialize(fileStream, receipts);
             fileStream.Close();
         }
+
         public static void SerializeStorage(List<Storage> storage)
         {
             BinaryFormatter formatter = new BinaryFormatter();
             using FileStream fileStream = new FileStream(pathStorage, FileMode.Truncate);
             formatter.Serialize(fileStream, storage);
             fileStream.Close();
+        }
+        public static void AddStorageToBD(Storage storage)
+        {
+            List<Storage> storages = DeserializeStorage();
+            storages.Add(storage);
+            SerializeStorage(storages);
         }
         public static List<Storage> DeserializeStorage()
         {
@@ -159,6 +173,7 @@ namespace E_Shop
             fileStream.Close();
             return storages;
         }
+
         public static void SerializeAccount(List<Account> accounts)
         {
             BinaryFormatter formatter = new BinaryFormatter();

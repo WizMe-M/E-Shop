@@ -35,15 +35,11 @@ namespace E_Shop
                     case 2:
                         return;
                 }
-                int i;
-                
-                do i = user.MainMenu();
-                while (i == 0);
-                if (i == -1) Terminate();
+                user.MainMenu();
             }
         }
 
-        static void MainMenu(Account account)
+        static void MainFunction(Account account)
         {
 
         }

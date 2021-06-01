@@ -3,47 +3,46 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 
 namespace E_Shop
 {
     [Serializable]
     class Warehouseman : Account
     {
-        public Warehouseman() : base()
-        {
-            Position = "Кладовщик";
-            WorkPlace = "Не указано";
-        }
         public Warehouseman(string Login, string Password) : base(Login, Password)
         {
             Position = "Кладовщик";
             WorkPlace = "Не указано";
+            Functions.AddRange(new (string, Method)[]
+            {
+                ("Создать склад", CreateStorage),
+                ("Просмотреть товар", ShowProduct),
+                ("Добавить новый товар на склад", AddProductToStorage),
+                ("Переместить товар с одного склада на другой", MoveProduct),
+                ("Изменить данные о товаре на складе", EditProduct),
+                ("Забраковать товар (удалить товар со склада)", DeffectProduct)
+            });
         }
-        void CreateStorage()
+        private void CreateStorage()
         {
             Console.WriteLine("Введите название для нового склада");
             string storageName = Console.ReadLine().Trim();
             List<Storage> storages = Helper.DeserializeStorage();
             if (storages.Count == 0 || storages.Find(s => s.Name == storageName) == null)
             {
-                storages.Add(new Storage(storageName));
+                Helper.AddStorageToBD(new Storage(storageName));
                 Console.WriteLine($"Склад \"{storageName}\" создан");
-                Helper.SerializeStorage(storages);
-                Console.WriteLine("Нажмите любую кнопку...");
-                Console.ReadKey();
             }
-            else
-            {
-                Console.WriteLine("Склад с таким именем уже существует!");
-                Console.WriteLine("Нажмите любую кнопку...");
-                Console.ReadKey();
-            }
+            else Console.WriteLine("Склад с таким именем уже существует!");
+            Console.WriteLine("Нажмите любую кнопку...");
+            Console.ReadKey();
         }
-        void ShowProduct()
+        private void ShowProduct()
         {
+            List<Storage> storages = Helper.DeserializeStorage();
             while (true)
             {
-                List<Storage> storages = Helper.DeserializeStorage();
                 if (storages.Count == 0)
                 {
                     Console.WriteLine("Не найдено cкладов.");
@@ -61,6 +60,12 @@ namespace E_Shop
 
                 if (chooseStorage == storagesName.Count - 1) break;
 
+
+                List<string> products = new List<string>();
+                foreach (Product product in storages[chooseStorage].Products)
+                    products.Add($"Товар \"{product.Name}\" | Категория {product.Category}");
+                products.Add("Назад");
+                ConsoleMenu productMenu = new ConsoleMenu(products.ToArray());
                 while (true)
                 {
                     if (storages[chooseStorage].Products.Count == 0)
@@ -71,13 +76,7 @@ namespace E_Shop
                         break;
                     }
 
-                    List<string> products = new List<string>();
-                    foreach (Product product in storages[chooseStorage].Products)
-                        products.Add($"Товар \"{product.Name}\" | Категория {product.Category}");
-                    products.Add("Назад");
-                    ConsoleMenu productMenu = new ConsoleMenu(products.ToArray());
                     int chooseProduct = productMenu.PrintMenu();
-
                     if (chooseProduct == products.Count - 1) break;
 
                     Console.WriteLine($"Данные о товаре №{chooseProduct + 1}");
@@ -88,16 +87,14 @@ namespace E_Shop
                     Console.WriteLine($"Количество товара на складе: {storages[chooseStorage].Products[chooseProduct].Count}");
                     Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
                     Console.ReadKey();
-
-                    Helper.SerializeStorage(storages);
                 }
             }
         }
-        void AddProductToStorage()
+        private void AddProductToStorage()
         {
+            List<Storage> storages = Helper.DeserializeStorage();
             while (true)
             {
-                List<Storage> storages = Helper.DeserializeStorage();
                 if (storages.Count == 0)
                 {
                     Console.WriteLine("Не найдено cкладов.");
@@ -115,26 +112,16 @@ namespace E_Shop
 
                 if (chooseStorage == storagesName.Count - 1) break;
 
+                ConsoleMenu AddOrBackMenu = new ConsoleMenu(new string[] { "Добавить товар", "Назад" });
                 while (true)
                 {
-                    ConsoleMenu addOrBackMenu = new ConsoleMenu(new string[] { "Добавить товар", "Назад" });
-                    if (addOrBackMenu.PrintMenu() == 1) break;
-                    Console.Clear();
-                    Console.WriteLine(storagesName[chooseStorage]);
-                    storages[chooseStorage].Products.Add(new Product());
+                    if (AddOrBackMenu.PrintMenu() == 1) break;
+                    storages[chooseStorage].AddOrIncrementProduct(new Product());
                     Helper.SerializeStorage(storages);
-
-                    List<Shop> shops = Helper.DeserializeShops();
-                    if (shops.Count != 0)
-                    {
-                        int shIndex = shops.FindIndex(s => s.AttachedStorage.Name == storages[chooseStorage].Name);
-                        shops[shIndex].AttachedStorage = storages[chooseStorage];
-                        Helper.SerializeShops(shops);
-                    }
                 }
             }
         }
-        void MoveProduct()
+        private void MoveProduct()
         {
             List<Storage> storages = Helper.DeserializeStorage();
             if (storages.Count < 2)
@@ -153,8 +140,7 @@ namespace E_Shop
             //выбираем склад-отправитель
             Console.Clear();
             Console.WriteLine("Выберите склад, с которого будете перемещать товар");
-            Console.WriteLine("Нажмите любую кнопку...");
-            Console.ReadKey();
+            Thread.Sleep(500);
             ConsoleMenu storageMenu = new ConsoleMenu(storageNames.ToArray());
             int index1 = storageMenu.PrintMenu();
             if (index1 == storageNames.Count - 1) return;
@@ -169,8 +155,7 @@ namespace E_Shop
             //выбираем товар
             Console.Clear();
             Console.WriteLine("Выберите товар, который хотите переместить");
-            Console.WriteLine("Нажмите любую кнопку...");
-            Console.ReadKey();
+            Thread.Sleep(500);
             List<string> products = new List<string>();
             foreach (Product product in storages[index1].Products)
                 products.Add($"Товар \"{product.Name}\" | Категория {product.Category} | {product.Price} рублей за один товар | {product.Count} шт.");
@@ -182,8 +167,7 @@ namespace E_Shop
             //выбираем склад-получатель
             Console.Clear();
             Console.WriteLine("Выберите склад, на который будете перемещать товар");
-            Console.WriteLine("Нажмите любую кнопку...");
-            Console.ReadKey();
+            Thread.Sleep(500);
             storageNames.Remove(storages[index1].Name);
             storageNames.TrimExcess();
             storageMenu = new ConsoleMenu(storageNames.ToArray());
@@ -194,29 +178,14 @@ namespace E_Shop
             //перемещаем товар
             Product movableProduct = storages[index1].Products[chooseProduct];
             storages[index1].Products.Remove(movableProduct);
-            int prIndex = storages[index2].Products.FindIndex(p => p.Name == movableProduct.Name && p.Category == movableProduct.Category && p.Price == movableProduct.Price && p.ShelfLife == movableProduct.ShelfLife);
-            if (prIndex != -1)
-                storages[index2].Products[prIndex].Count += movableProduct.Count;
-            else
-                storages[index2].Products.Add(movableProduct);
-
+            storages[index2].AddOrIncrementProduct(movableProduct);
             Helper.SerializeStorage(storages);
-
-            List<Shop> shops = Helper.DeserializeShops();
-            if (shops.Count != 0)
-            {
-                int shIndex1 = shops.FindIndex(s => s.AttachedStorage.Name == storages[index1].Name);
-                shops[shIndex1].AttachedStorage = storages[index1];
-                int shIndex2 = shops.FindIndex(s => s.AttachedStorage.Name == storages[index2].Name);
-                shops[shIndex2].AttachedStorage = storages[index2];
-                Helper.SerializeShops(shops);
-            }
         }
-        void EditProduct()
+        private void EditProduct()
         {
+            List<Storage> storages = Helper.DeserializeStorage();
             while (true)
             {
-                List<Storage> storages = Helper.DeserializeStorage();
                 if (storages.Count == 0)
                 {
                     Console.WriteLine("Не найдено cкладов.");
@@ -254,15 +223,13 @@ namespace E_Shop
                     if (chooseProduct == productNames.Count - 1)
                         break;
 
-                    string[] productData =
-                    {
+                    string[] productData = {
                     "Название товара - " + storages[chooseStorage].Products[chooseProduct].Name,
                     "Категория - " + storages[chooseStorage].Products[chooseProduct].Category,
                     "Цена за единицу товара - " + storages[chooseStorage].Products[chooseProduct].Price.ToString(),
                     "Количество товара - " + storages[chooseStorage].Products[chooseProduct].Count.ToString(),
                     "Срок годности (до) - " + storages[chooseStorage].Products[chooseProduct].ShelfLife,
-                    "Назад"
-                    };
+                    "Назад"};
                     ConsoleMenu dataMenu = new ConsoleMenu(productData);
                     int chooseData = dataMenu.PrintMenu();
                     if (chooseData == productData.Length - 1)
@@ -290,24 +257,15 @@ namespace E_Shop
                                 break;
                         }
                     }
-
-
                     Helper.SerializeStorage(storages);
-                    List<Shop> shops = Helper.DeserializeShops();
-                    if (shops.Count != 0)
-                    {
-                        int shIndex = shops.FindIndex(s => s.AttachedStorage.Name == storages[chooseStorage].Name);
-                        shops[shIndex].AttachedStorage = storages[chooseStorage];
-                        Helper.SerializeShops(shops);
-                    }
                 }
             }
         }
-        void DeffectProduct()
+        private void DeffectProduct()
         {
+            List<Storage> storages = Helper.DeserializeStorage();
             while (true)
             {
-                List<Storage> storages = Helper.DeserializeStorage();
                 if (storages.Count == 0)
                 {
                     Console.WriteLine("Не найдено cкладов.");
@@ -322,7 +280,6 @@ namespace E_Shop
 
                 ConsoleMenu storageMenu = new ConsoleMenu(storagesName.ToArray());
                 int chooseStorage = storageMenu.PrintMenu();
-
                 if (chooseStorage == storagesName.Count - 1) break;
 
                 while (true)
@@ -339,66 +296,18 @@ namespace E_Shop
                     foreach (Product product in storages[chooseStorage].Products)
                         productNames.Add($"Товар {product.Name} | Категория {product.Category} | Срок годности {product.ShelfLife}");
                     productNames.Add("Назад");
+
                     ConsoleMenu productMenu = new ConsoleMenu(productNames.ToArray());
                     int chooseProduct = productMenu.PrintMenu();
-
                     if (chooseProduct == productNames.Count - 1)
                         break;
 
                     storages[chooseStorage].Products.RemoveAt(chooseProduct);
                     Helper.SerializeStorage(storages);
-                    List<Shop> shops = Helper.DeserializeShops();
-                    if (shops.Count != 0)
-                    {
-                        int shIndex = shops.FindIndex(s => s.AttachedStorage.Name == storages[chooseStorage].Name);
-                        shops[shIndex].AttachedStorage = storages[chooseStorage];
-                        Helper.SerializeShops(shops);
-                    }
                     if (storages[chooseStorage].Products.Count == 0) break;
                 }
             }
 
-        }
-        public override int MainMenu()
-        {
-            string[] functions = {
-                "Создать склад",
-                "Просмотреть товар",
-                "Добавить новый товар на склад",
-                "Переместить товар с одного склада на другой",
-                "Изменить данные о товаре на складе",
-                "Забраковать товар (удалить товар со склада)",
-                "Выйти из аккаунта",
-                "Выйти из приложения" };
-            ConsoleMenu adminMenu = new ConsoleMenu(functions);
-            int chooseFunc = adminMenu.PrintMenu();
-            Console.Clear();
-            switch (chooseFunc)
-            {
-                case 0:
-                    CreateStorage();
-                    break;
-                case 1:
-                    ShowProduct();
-                    break;
-                case 2:
-                    AddProductToStorage();
-                    break;
-                case 3:
-                    MoveProduct();
-                    break;
-                case 4:
-                    EditProduct();
-                    break;
-                case 5:
-                    DeffectProduct();
-                    break;
-                default:
-                    if (chooseFunc == functions.Length - 1)
-                        return -1;
-                    else return 1;
-            }
-            return 0;
         }
     }
 }

@@ -19,18 +19,21 @@ namespace E_Shop
         }
         void ChooseAttachedStorage()
         {
-            Console.Clear();
-            Console.WriteLine("Выберите склад, к которому будет привязан магазин:");
-            Console.WriteLine("Нажмите любую кнопку, чтобы перейти к выбору...");
-            Console.ReadKey();
             List<Storage> storages = Helper.DeserializeStorage();
             if (storages.Count == 0)
             {
+                Console.WriteLine("Нет складов в базе данных! Создайте новый склад.");
                 Console.WriteLine("Введите название склада:");
                 string name = Console.ReadLine();
                 storages.Add(new Storage(name));
                 Helper.SerializeStorage(storages);
             }
+
+            Console.Clear();
+            Console.WriteLine("Выберите склад, к которому будет привязан магазин:");
+            Console.WriteLine("Нажмите любую кнопку, чтобы перейти к выбору...");
+            Console.ReadKey();
+
             List<string> storageNames = new List<string>();
             foreach (Storage s in storages)
                 storageNames.Add(s.Name);
