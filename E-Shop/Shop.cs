@@ -4,6 +4,7 @@ using System.Text;
 
 namespace E_Shop
 {
+    [Serializable]
     class Shop
     {
         public string Name { get; set; }
@@ -23,6 +24,13 @@ namespace E_Shop
             Console.WriteLine("Нажмите любую кнопку, чтобы перейти к выбору...");
             Console.ReadKey();
             List<Storage> storages = Helper.DeserializeStorage();
+            if (storages.Count == 0)
+            {
+                Console.WriteLine("Введите название склада:");
+                string name = Console.ReadLine();
+                storages.Add(new Storage(name));
+                Helper.SerializeStorage(storages);
+            }
             List<string> storageNames = new List<string>();
             foreach (Storage s in storages)
                 storageNames.Add(s.Name);

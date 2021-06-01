@@ -10,7 +10,7 @@ namespace E_Shop
     [Serializable]
     abstract class Account
     {
-        public static string[] accountTypes = { "Администратор", "Кадровик", "Кладовщик", "Назад" };
+        public static string[] accountTypes = { "Покупатель", "Администратор", "Кадровик", "Кладовщик", "Продавец", "Назад" };
         public bool isDeleted { get; set; } = false;
         public bool isHired { get; set; } = true;
         public string Position { get; set; }
@@ -62,10 +62,11 @@ namespace E_Shop
             string p = Console.ReadLine();
             Account account = role switch
             {
+                "Покупатель" => new Customer(l, p),
                 "Администратор" => new Admin(l, p),
                 "Кадровик" => new Personnel(l, p),
                 "Кладовщик" => new Warehouseman(l, p),
-                "Покупатель" => new Customer(l, p),
+                "Продавец" => new Seller(l, p),
                 _ => null,
             };
             return account;

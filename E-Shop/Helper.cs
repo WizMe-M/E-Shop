@@ -22,6 +22,7 @@ namespace E_Shop
             {
                 int.TryParse(s, out int res);
                 i = res;
+                //хуйня
             } while (i == 0);
             return i;
         }
@@ -79,6 +80,8 @@ namespace E_Shop
                             "Администратор" => (Admin)acc,
                             "Кадровик" => (Personnel)acc,
                             "Кладовщик" => (Warehouseman)acc,
+                            "Продавец" => (Seller)acc,
+                            "Покупатель" => (Customer)acc,
                             _ => throw new Exception("Что-то пошло не так..." +
                             "\nСудя по всему, аккаунт имеет неправильные настройки!"),
                         };
@@ -103,7 +106,7 @@ namespace E_Shop
         {
             List<Shop> shops = new List<Shop>();
             BinaryFormatter formatter = new BinaryFormatter();
-            using FileStream fileStream = new FileStream(pathStorage, FileMode.OpenOrCreate);
+            using FileStream fileStream = new FileStream(pathShop, FileMode.OpenOrCreate);
             if (fileStream.Length != 0)
                 shops = (List<Shop>)formatter.Deserialize(fileStream);
             fileStream.Close();
@@ -135,7 +138,7 @@ namespace E_Shop
         public static void SerializeReceipt(List<Receipt> receipts)
         {
             BinaryFormatter formatter = new BinaryFormatter();
-            using FileStream fileStream = new FileStream(pathStorage, FileMode.Truncate);
+            using FileStream fileStream = new FileStream(pathReceipt, FileMode.Truncate);
             formatter.Serialize(fileStream, receipts);
             fileStream.Close();
         }

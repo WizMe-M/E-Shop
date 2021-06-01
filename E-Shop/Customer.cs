@@ -35,6 +35,7 @@ namespace E_Shop
         public Customer(string Login, string Password) : base(Login, Password)
         {
             Position = "Покупатель";
+            ShopList = new List<Product>();
             Console.Clear();
             Console.WriteLine("Введите электронный адрес, на который хотите получать чеки:");
             Email = Console.ReadLine().Trim();
@@ -74,9 +75,15 @@ namespace E_Shop
                 ConsoleMenu productMenu = new ConsoleMenu(productNames.ToArray());
                 int chooseProduct = productMenu.PrintMenu();
                 if (chooseProduct == productNames.Count - 1) break;
-
-                ShopList.Add(shop.AttachedStorage.Products[chooseProduct]);
-                ShopList[^1].Count = 1;
+                if (!ShopList.Contains(shop.AttachedStorage.Products[chooseProduct]))
+                {
+                    ShopList.Add(shop.AttachedStorage.Products[chooseProduct]);
+                    ShopList[^1].Count = 1;
+                    Console.WriteLine("Товар добавлен в корзину");
+                }
+                else Console.WriteLine("Такой товар уже есть в вашей корзине!");
+                Console.WriteLine("Нажмите любую кнопку...");
+                Console.ReadKey();
             }
         }
         void RemoveProduct()

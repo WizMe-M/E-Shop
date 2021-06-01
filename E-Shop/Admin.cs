@@ -24,7 +24,7 @@ namespace E_Shop
 
         void ShowAccount()
         {
-            while(true)
+            while (true)
             {
                 List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accLogins = new List<string>();
@@ -39,7 +39,7 @@ namespace E_Shop
                 }
 
                 accLogins.Add("Назад");
-                
+
                 ConsoleMenu showMenu = new ConsoleMenu(accLogins.ToArray());
                 int chooseShowAcc = showMenu.PrintMenu();
                 if (chooseShowAcc == accLogins.Count - 1) break;
@@ -53,9 +53,14 @@ namespace E_Shop
                 Console.WriteLine($"Логин аккаунта:\t\t{acc.Login}");
                 Console.WriteLine($"Пароль аккаунта:\t{acc.Password}");
                 Console.WriteLine($"ФИО пользователя: {acc.LastName} {acc.FirstName} {acc.Patronomic}");
-                Console.WriteLine($"Дата рождения: {acc.BirthdayDate.ToShortDateString()}; Возраст: {acc.Age}");
-                Console.WriteLine($"Образование: {acc.StudyYears} лет; Опыт работы: {acc.WorkExperience} лет");
-                Console.WriteLine($"Должность: {acc.Position}; Зарплата: {acc.Salary}");
+                if (!(acc is Customer))
+                {
+                    Console.WriteLine($"Дата рождения: {acc.BirthdayDate.ToShortDateString()}; Возраст: {acc.Age}");
+                    Console.WriteLine($"Образование: {acc.StudyYears} лет; Опыт работы: {acc.WorkExperience} лет");
+                    Console.WriteLine($"Должность: {acc.Position}; Зарплата: {acc.Salary}");
+                }
+                else Console.WriteLine($"Почта пользователя: {(acc as Customer).Email}");
+
                 Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
                 Console.ReadKey();
             }
@@ -67,7 +72,7 @@ namespace E_Shop
                 List<Account> accounts = Helper.DeserializeAccount();
                 ConsoleMenu registerMenu = new ConsoleMenu(accountTypes);
                 int chooseType = registerMenu.PrintMenu();
-                
+
                 if (chooseType == accountTypes.Length - 1) break;
 
                 Account newAccount = Registration(accountTypes[chooseType]);
@@ -82,19 +87,10 @@ namespace E_Shop
             {
                 List<Account> accounts = Helper.DeserializeAccount();
                 List<string> accountList = new List<string>();
-                if (toDeleteStatus)
-                {
-                    foreach (Account acc in accounts)
-                        if (acc != this && !acc.isDeleted)
-                            accountList.Add(acc.Login);
-                }
-                else
-                {
-                    foreach (Account acc in accounts)
-                        if (acc != this && acc.isDeleted)
-                            accountList.Add(acc.Login);
-                }
 
+                foreach (Account acc in accounts)
+                    if(acc.isDeleted != toDeleteStatus)
+                        accountList.Add(acc.Login);
                 if (accountList.Count == 0)
                 {
                     Console.WriteLine($"Нет аккаунтов, которые бы вы могли {(toDeleteStatus ? "удалить" : "восстановить")}");
@@ -102,13 +98,18 @@ namespace E_Shop
                     Console.ReadKey();
                     break;
                 }
+
+                accountList.Remove(Login);
                 accountList.Add("Назад");
+                
                 int choseDeleteAcc;
                 ConsoleMenu deleteMenu = new ConsoleMenu(accountList.ToArray());
                 choseDeleteAcc = deleteMenu.PrintMenu();
                 if (choseDeleteAcc == accountList.Count - 1) break;
+                
                 int index = accounts.FindIndex(deleted => deleted.Login == accountList[choseDeleteAcc]);
                 accounts[index].isDeleted = toDeleteStatus;
+                
                 Helper.SerializeAccount(accounts);
                 Console.WriteLine($"Аккаунт {accounts[index].Login} {(accounts[index].isDeleted ? "удалён" : "восстановлен")}!");
                 Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
@@ -116,7 +117,7 @@ namespace E_Shop
             }
         }
         void EditAccount()
-        {          
+        {
             while (true)
             {
                 List<Account> accounts = Helper.DeserializeAccount();
@@ -128,9 +129,9 @@ namespace E_Shop
                 ConsoleMenu editMenu = new ConsoleMenu(accLogins.ToArray());
                 int chooseShowAcc = editMenu.PrintMenu();
                 if (chooseShowAcc == accLogins.Count - 1) break;
-                
+
                 int index = accounts.FindIndex(chosen => chosen.Login == accLogins[chooseShowAcc]);
-            
+
                 while (true)
                 {
                     string[] accountData =
