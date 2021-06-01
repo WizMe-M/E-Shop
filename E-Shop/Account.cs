@@ -11,6 +11,8 @@ namespace E_Shop
     abstract class Account
     {
         public static string[] accountTypes = { "Покупатель", "Администратор", "Кадровик", "Кладовщик", "Продавец", "Назад" };
+        public delegate void Method();
+        public List<(string, Method)> Functions { get; }
         public bool isDeleted { get; set; } = false;
         public bool isHired { get; set; } = true;
         public string Position { get; set; }
@@ -71,6 +73,19 @@ namespace E_Shop
             };
             return account;
         }
-        public abstract int MainMenu();
+        public void MainMenu()
+        {
+            List<string> func = new List<string>();
+            foreach ((string, Method) pair in Functions)
+                func.Add(pair.Item1);
+            func.AddRange(new string[] { "Выйти из аккаунта", "Выйти из приложения" });
+            ConsoleMenu adminMenu = new ConsoleMenu(func.ToArray());
+            int chooseFunc = adminMenu.PrintMenu();
+            if (chooseFunc == func.Count - 2) return;
+            if (chooseFunc == func.Count - 1) Program.Terminate();
+            Console.Clear();
+            Functions[chooseFunc].Item2();
+            return;
+        }
     }
 }

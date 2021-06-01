@@ -11,15 +11,16 @@ namespace E_Shop
     [Serializable]
     class Admin : Account
     {
-        public Admin() : base()
-        {
-            Position = "Администратор";
-            WorkPlace = "Офис";
-        }
         public Admin(string Login, string Password) : base(Login, Password)
         {
             Position = "Администратор";
             WorkPlace = "Офис";
+            Functions.AddRange(new (string, Method)[] {
+                    ("Просмотреть данные пользователя", ShowAccount),
+                    ("Изменить данные пользователя", EditAccount),
+                    ("Зарегистрировать пользователя", RegisterNewAccount),
+                    ("Удалить пользователя", DeleteAccount),
+                    ("Восстановить пользователя", RestoreAccount)});
         }
 
         void ShowAccount()
@@ -81,7 +82,7 @@ namespace E_Shop
                 Helper.SerializeAccount(accounts);
             }
         }
-        void ChangeAccountDeleteStatus(bool toDeleteStatus)
+        void DeleteAccount()
         {
             while (true)
             {
@@ -89,31 +90,62 @@ namespace E_Shop
                 List<string> accountList = new List<string>();
 
                 foreach (Account acc in accounts)
-                    if(acc.isDeleted != toDeleteStatus)
+                    if (!acc.isDeleted)
                         accountList.Add(acc.Login);
+                accountList.Remove(Login);
                 if (accountList.Count == 0)
                 {
-                    Console.WriteLine($"Нет аккаунтов, которые бы вы могли {(toDeleteStatus ? "удалить" : "восстановить")}");
+                    Console.WriteLine($"Нет аккаунтов, которые бы вы могли удалить");
                     Console.WriteLine("Нажмите любую кнопку...");
                     Console.ReadKey();
                     break;
                 }
-
-                accountList.Remove(Login);
                 accountList.Add("Назад");
-                
+
                 int choseDeleteAcc;
                 ConsoleMenu deleteMenu = new ConsoleMenu(accountList.ToArray());
                 choseDeleteAcc = deleteMenu.PrintMenu();
                 if (choseDeleteAcc == accountList.Count - 1) break;
-                
+
                 int index = accounts.FindIndex(deleted => deleted.Login == accountList[choseDeleteAcc]);
-                accounts[index].isDeleted = toDeleteStatus;
-                
+                accounts[index].isDeleted = true;
+
                 Helper.SerializeAccount(accounts);
-                Console.WriteLine($"Аккаунт {accounts[index].Login} {(accounts[index].isDeleted ? "удалён" : "восстановлен")}!");
-                Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
-                Console.ReadKey();
+                Console.WriteLine($"Аккаунт {accounts[index].Login} удалён!");
+                Thread.Sleep(500);
+            }
+        }
+        void RestoreAccount()
+        {
+            while (true)
+            {
+                List<Account> accounts = Helper.DeserializeAccount();
+                List<string> accountList = new List<string>();
+
+                foreach (Account acc in accounts)
+                    if (acc.isDeleted)
+                        accountList.Add(acc.Login);
+                accountList.Remove(Login);
+                if (accountList.Count == 0)
+                {
+                    Console.WriteLine($"Нет аккаунтов, которые бы вы могли восттановить");
+                    Console.WriteLine("Нажмите любую кнопку...");
+                    Console.ReadKey();
+                    break;
+                }
+                accountList.Add("Назад");
+
+                int choseDeleteAcc;
+                ConsoleMenu deleteMenu = new ConsoleMenu(accountList.ToArray());
+                choseDeleteAcc = deleteMenu.PrintMenu();
+                if (choseDeleteAcc == accountList.Count - 1) break;
+
+                int index = accounts.FindIndex(deleted => deleted.Login == accountList[choseDeleteAcc]);
+                accounts[index].isDeleted = false;
+
+                Helper.SerializeAccount(accounts);
+                Console.WriteLine($"Аккаунт {accounts[index].Login} восстановлен!");
+                Thread.Sleep(500);
             }
         }
         void EditAccount()
@@ -187,44 +219,6 @@ namespace E_Shop
                     Helper.SerializeAccount(accounts);
                 }
             }
-        }
-
-        public override int MainMenu()
-        {
-            string[] functions = {
-                "Просмотреть данные пользователя",
-                "Изменить данные пользователя",
-                "Зарегистрировать пользователя",
-                "Удалить пользователя",
-                "Восстановить аккаунт пользователя",
-                "Выйти из аккаунта",
-                "Выйти из приложения" };
-            ConsoleMenu adminMenu = new ConsoleMenu(functions);
-            int chooseFunc = adminMenu.PrintMenu();
-            Console.Clear();
-            switch (chooseFunc)
-            {
-                case 0:
-                    ShowAccount();
-                    break;
-                case 1:
-                    EditAccount();
-                    break;
-                case 2:
-                    RegisterNewAccount();
-                    break;
-                case 3:
-                    ChangeAccountDeleteStatus(true);
-                    break;
-                case 4:
-                    ChangeAccountDeleteStatus(false);
-                    break;
-                default:
-                    if (chooseFunc == functions.Length - 1)
-                        return -1;
-                    else return 1;
-            }
-            return 0;
         }
     }
 }
