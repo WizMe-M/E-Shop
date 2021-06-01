@@ -13,6 +13,7 @@ namespace E_Shop
         [NonSerialized]
         public static string[] accountTypes = { "Покупатель", "Администратор", "Кадровик", "Кладовщик", "Продавец", "Назад" };
         public delegate void Method();
+
         [NonSerialized]
         public List<(string, Method)> Functions = new List<(string, Method)>();
         public bool isDeleted { get; set; } = false;
