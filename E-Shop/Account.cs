@@ -58,6 +58,7 @@ namespace E_Shop
 
         public static Account Registration(string role)
         {
+            Console.Clear();
             Console.WriteLine("Введите логин: ");
             string l = Console.ReadLine();
             Console.WriteLine("Введите пароль: ");
@@ -71,6 +72,14 @@ namespace E_Shop
                 "Продавец" => new Seller(l, p),
                 _ => null,
             };
+
+            Console.Write("Введите фамилию: ");
+            account.FirstName = Console.ReadLine().Trim();
+            Console.Write("\nВведите имя: ");
+            account.LastName = Console.ReadLine().Trim();
+            Console.Write("\nВведите отчество: ");
+            account.Patronomic = Console.ReadLine().Trim();
+
             return account;
         }
         public void MainMenu()

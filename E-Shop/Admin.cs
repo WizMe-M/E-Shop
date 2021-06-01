@@ -54,13 +54,14 @@ namespace E_Shop
                 Console.WriteLine($"Логин аккаунта:\t\t{acc.Login}");
                 Console.WriteLine($"Пароль аккаунта:\t{acc.Password}");
                 Console.WriteLine($"ФИО пользователя: {acc.LastName} {acc.FirstName} {acc.Patronomic}");
-                if (!(acc is Customer))
+                if (acc is Customer)
+                    Console.WriteLine($"Почта пользователя: {(acc as Customer).Email}");
+                else
                 {
                     Console.WriteLine($"Дата рождения: {acc.BirthdayDate.ToShortDateString()}; Возраст: {acc.Age}");
                     Console.WriteLine($"Образование: {acc.StudyYears} лет; Опыт работы: {acc.WorkExperience} лет");
                     Console.WriteLine($"Должность: {acc.Position}; Зарплата: {acc.Salary}");
                 }
-                else Console.WriteLine($"Почта пользователя: {(acc as Customer).Email}");
 
                 Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
                 Console.ReadKey();
@@ -68,12 +69,11 @@ namespace E_Shop
         }
         void RegisterNewAccount()
         {
+            List<Account> accounts = Helper.DeserializeAccount();
+            ConsoleMenu registerMenu = new ConsoleMenu(accountTypes);
             while (true)
             {
-                List<Account> accounts = Helper.DeserializeAccount();
-                ConsoleMenu registerMenu = new ConsoleMenu(accountTypes);
                 int chooseType = registerMenu.PrintMenu();
-
                 if (chooseType == accountTypes.Length - 1) break;
 
                 Account newAccount = Registration(accountTypes[chooseType]);
@@ -93,6 +93,7 @@ namespace E_Shop
                     if (!acc.isDeleted)
                         accountList.Add(acc.Login);
                 accountList.Remove(Login);
+
                 if (accountList.Count == 0)
                 {
                     Console.WriteLine($"Нет аккаунтов, которые бы вы могли удалить");
@@ -166,8 +167,7 @@ namespace E_Shop
 
                 while (true)
                 {
-                    string[] accountData =
-                    {
+                    string[] accountData = {
                     "Логин - " + accounts[index].Login,
                     "Пароль - " + accounts[index].Password,
                     "Фамилия - " + accounts[index].FirstName,
@@ -177,8 +177,7 @@ namespace E_Shop
                     "Возраст - " + accounts[index].Age.ToString(),
                     "Образование - " + accounts[index].StudyYears.ToString(),
                     "Опыт работы - " + accounts[index].WorkExperience.ToString(),
-                    "Назад"
-                    };
+                    "Назад"};
                     ConsoleMenu dataMenu = new ConsoleMenu(accountData);
                     int chooseData = dataMenu.PrintMenu();
                     if (chooseData == accountData.Length - 1) break;
@@ -186,6 +185,7 @@ namespace E_Shop
                     Console.Clear();
                     Console.WriteLine("Введите новые данные:");
                     string changedData = Console.ReadLine().Trim();
+                    //что-то здесь не так...
                     switch (chooseData)
                     {
                         case 0:
@@ -216,6 +216,7 @@ namespace E_Shop
                             accounts[index].WorkExperience = int.Parse(changedData);
                             break;
                     }
+
                     Helper.SerializeAccount(accounts);
                 }
             }

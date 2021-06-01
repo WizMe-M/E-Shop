@@ -18,9 +18,17 @@ namespace E_Shop
         {
             Position = "Кадровик";
             WorkPlace = "Офис";
+            Functions.AddRange(new (string, Method)[]
+            {
+                ("Просмотреть данные сотрудников", ShowUsers),
+                ("Изменить данные сотрудников", EditUsers),
+                ("Нанять сотрудника", HireUser),
+                ("Уволить сотрудника", FireUser),
+                ("Перевести сотрудника на другую должность", TransferToNewPosition)
+            });
         }
 
-        void ShowUsers()
+        private void ShowUsers()
         {
             while (true)
             {
@@ -57,12 +65,12 @@ namespace E_Shop
                 Console.ReadKey();
             }
         }
-        void EditAccount()
+        private void EditUsers()
         {
+            List<Account> accounts = Helper.DeserializeAccount();
+            List<string> accLogins = new List<string>();
             while (true)
             {
-                List<Account> accounts = Helper.DeserializeAccount();
-                List<string> accLogins = new List<string>();
                 foreach (Account a in accounts)
                     if (!a.isDeleted && !(a is Customer))
                         accLogins.Add(a.Login);
@@ -129,45 +137,38 @@ namespace E_Shop
                 }
             }
         }
-        void TransferToNewPosition()
+        private void TransferToNewPosition()
         {
+            List<Account> accounts = Helper.DeserializeAccount();
+            List<string> accountList = new List<string>();
+            ConsoleMenu editMenu = new ConsoleMenu(accountList.ToArray());
             while (true)
             {
-                List<Account> accounts = Helper.DeserializeAccount();
-                List<string> accountList = new List<string>();
-
                 foreach (Account a in accounts)
                     if (!a.isDeleted && !(a is Customer))
                         if (a.isHired)
                             accountList.Add(a.Login);
+                accountList.Remove(Login);
 
                 if (accountList.Count == 0)
                 {
-                    Console.WriteLine($"Нет аккаунтов, которые бы вы могли перевести на другую должность");
+                    Console.WriteLine($"Нет сотрудников, которые бы вы могли перевести на другую должность");
                     Console.WriteLine("Нажмите любую кнопку...");
                     Console.ReadKey();
                     break;
                 }
-                accountList.Remove(Login);
                 accountList.Add("Назад");
 
-                ConsoleMenu editMenu = new ConsoleMenu(accountList.ToArray());
                 int chooseAcc = editMenu.PrintMenu();
-
                 if (chooseAcc == accountList.Count - 1) break;
 
-                Account newPosition = accounts.Find(chosen => chosen.Login == accountList[chooseAcc]);
-                accounts.Remove(newPosition);
-                List<string> positions = new List<string>() { "Администратор", "Кадровик", "Кладовщик", "Продавец", "Назад" };
-                positions.Remove(newPosition.Position);
-                ConsoleMenu positionMenu = new ConsoleMenu(positions.ToArray());
-                int posNumber = positionMenu.PrintMenu();
-                newPosition.Position = positions[posNumber];
-                accounts.Add(newPosition);
+                //индекс акка, который переводим на новую должность
+                int index = accounts.FindIndex(chosen => chosen.Login == accountList[chooseAcc]);
+                ChangePosition(ref accounts, index);
                 Helper.SerializeAccount(accounts);
             }
         }
-        void ChangeHireStatus(bool toHireStatus)
+        private void HireUser()
         {
             while (true)
             {
@@ -175,17 +176,16 @@ namespace E_Shop
                 List<string> accountList = new List<string>();
 
                 foreach (Account a in accounts)
-                    if (!a.isDeleted && !(a is Customer) && a.isHired != toHireStatus)
+                    if (!a.isDeleted && !(a is Customer) && a.isHired)
                         accountList.Add(a.Login);
-
+                accountList.Remove(Login);
                 if (accountList.Count == 0)
                 {
-                    Console.WriteLine($"Нет аккаунтов, которые бы вы могли {(toHireStatus ? "нанять" : "уволить")}");
+                    Console.WriteLine($"Нет сотрудников, которые вы бы могли нанять");
                     Console.WriteLine("Нажмите любую кнопку...");
                     Console.ReadKey();
                     break;
                 }
-                accountList.Remove(Login);
                 accountList.Add("Назад");
 
                 ConsoleMenu deleteMenu = new ConsoleMenu(accountList.ToArray());
@@ -193,52 +193,73 @@ namespace E_Shop
                 if (choseDeleteAcc == accountList.Count - 1) break;
 
                 int index = accounts.FindIndex(deleted => deleted.Login == accountList[choseDeleteAcc]);
-                accounts[index].isHired = toHireStatus;
+                accounts[index].isHired = true;
 
                 Helper.SerializeAccount(accounts);
-                Console.WriteLine($"Аккаунт {accounts[index].Login} " + (accounts[index].isHired ? "нанят" : "уволен") + "!");
+                Console.WriteLine($"Сотрудник {accounts[index].Login} нанят!");
+                Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
+                Console.ReadKey();
+            }
+        }
+        private void FireUser()
+        {
+            while (true)
+            {
+                List<Account> accounts = Helper.DeserializeAccount();
+                List<string> accountList = new List<string>();
+
+                foreach (Account a in accounts)
+                    if (!a.isDeleted && !(a is Customer) && !a.isHired)
+                        accountList.Add(a.Login);
+                accountList.Remove(Login);
+
+                if (accountList.Count == 0)
+                {
+                    Console.WriteLine($"Нет сотрудников, которые вы бы могли уволить");
+                    Console.WriteLine("Нажмите любую кнопку...");
+                    Console.ReadKey();
+                    break;
+                }
+                accountList.Add("Назад");
+
+                ConsoleMenu deleteMenu = new ConsoleMenu(accountList.ToArray());
+                int choseDeleteAcc = deleteMenu.PrintMenu();
+                if (choseDeleteAcc == accountList.Count - 1) break;
+
+                int index = accounts.FindIndex(deleted => deleted.Login == accountList[choseDeleteAcc]);
+                accounts[index].isHired = false;
+
+                Helper.SerializeAccount(accounts);
+                Console.WriteLine($"Сотрудник {accounts[index].Login} уволен!");
                 Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
                 Console.ReadKey();
             }
         }
 
-        public override int MainMenu()
+        //Вспомогательная функция 
+        void ChangePosition(ref List<Account> accounts, int index)
         {
-            string[] functions = {
-                "Просмотреть данные сотрудников",
-                "Изменить данные сотрудников",
-                "Нанять сотрудника",
-                "Уволить сотрудника",
-                "Перевести сотрудника на другую должность",
-                "Выйти из аккаунта",
-                "Выйти из приложения" };
-            ConsoleMenu adminMenu = new ConsoleMenu(functions);
-            int chooseFunc = adminMenu.PrintMenu();
-            Console.Clear();
-            switch (chooseFunc)
-            {
-                case 0:
-                    ShowUsers();
-                    break;
-                case 1:
-                    EditAccount();
-                    break;
-                case 2:
-                    ChangeHireStatus(true);
-                    break;
-                case 3:
-                    ChangeHireStatus(false);
-                    break;
-                case 4:
-                    TransferToNewPosition();
-                    break;
-                default:
-                    if (chooseFunc == functions.Length - 1)
-                        return -1;
-                    else return 1;
-            }
-            return 0;
-        }
+            List<string> positions = new List<string>();
+            foreach (string s in accountTypes)
+                if (s != accounts[index].Position && s != "Покупатель")
+                    positions.Add(s);
+            positions.Add("Отмена");
 
+            ConsoleMenu positionMenu = new ConsoleMenu(positions.ToArray());
+            int posNumber = positionMenu.PrintMenu();
+            if (posNumber == positions.Count - 1) return;
+
+            Account AccountNewPosition = positions[posNumber] switch
+            {
+                "Администратор" => new Admin(accounts[index].Login, accounts[index].Password),
+                "Кадровик" => new Personnel(accounts[index].Login, accounts[index].Password),
+                "Кладовщик" => new Warehouseman(accounts[index].Login, accounts[index].Password),
+                "Продавец" => new Seller(accounts[index].Login, accounts[index].Password),
+                _ => null,
+            };
+            accounts.RemoveAt(index);
+
+            accounts.Insert(index, AccountNewPosition);
+        }
     }
 }
