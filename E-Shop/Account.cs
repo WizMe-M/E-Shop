@@ -13,8 +13,8 @@ namespace E_Shop
         public static string[] accountTypes = { "Покупатель", "Администратор", "Кадровик", "Кладовщик", "Продавец", "Назад" };
         public delegate void Method();
         public List<(string, Method)> Functions { get; }
-        public bool isDeleted { get; set; } = false;
-        public bool isHired { get; set; } = true;
+        public bool isDeleted = false;
+        public bool isHired = true;
         public string Position { get; set; }
         public string Login { get; set; }
         public string Password { get; set; }
