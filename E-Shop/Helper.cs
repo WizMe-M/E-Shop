@@ -99,8 +99,18 @@ namespace E_Shop
             }
         }
 
-        
 
+
+        public static Shop ChooseShop()
+        {
+            List<Shop> shops = DeserializeShops();
+            List<string> names = new List<string>();
+            foreach (Shop s in shops)
+                names.Add(s.Name);
+            ConsoleMenu shopMenu = new ConsoleMenu(names.ToArray());
+            int choose = shopMenu.PrintMenu();
+            return shops[choose];
+        }
 
         public static List<Shop> DeserializeShops()
         {
@@ -123,30 +133,6 @@ namespace E_Shop
             BinaryFormatter formatter = new BinaryFormatter();
             using FileStream fileStream = new FileStream(pathShop, FileMode.Truncate);
             formatter.Serialize(fileStream, shops);
-            fileStream.Close();
-        }
-
-        public static List<Receipt> DeserializeReceipt()
-        {
-            List<Receipt> receipts = new List<Receipt>();
-            BinaryFormatter formatter = new BinaryFormatter();
-            using FileStream fileStream = new FileStream(pathReceipt, FileMode.OpenOrCreate);
-            if (fileStream.Length != 0)
-                receipts = (List<Receipt>)formatter.Deserialize(fileStream);
-            fileStream.Close();
-            return receipts;
-        }
-        public static void SerializeReceipt(Shop shop, Customer customer)
-        {
-            List<Receipt> receipts = DeserializeReceipt();
-            receipts.Add(new Receipt(customer, shop));
-            SerializeReceipt(receipts);
-        }
-        public static void SerializeReceipt(List<Receipt> receipts)
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            using FileStream fileStream = new FileStream(pathReceipt, FileMode.Truncate);
-            formatter.Serialize(fileStream, receipts);
             fileStream.Close();
         }
 

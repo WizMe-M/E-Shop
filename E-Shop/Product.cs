@@ -58,6 +58,7 @@ namespace E_Shop
             int count = 1;
             while (true)
             {
+                Console.Clear();
                 Console.WriteLine($"Товар {Name} | Цена: {Price} | Срок годности до: {ShelfLife}");
                 Console.Write("Нажимайте на стрелки, чтобы изменить количество товара:\t"+count);
                 ConsoleKeyInfo key = Console.ReadKey();

@@ -25,22 +25,24 @@ namespace E_Shop
             }
         }
         public List<Product> ShopList { get; set; }
-        public Customer() : base()
-        {
-            Position = "Покупатель";
-            Console.Clear();
-            Console.WriteLine("Введите электронный адрес, на который хотите получать чеки:");
-            Email = Console.ReadLine().Trim();
-        }
+        //экземпляр магазина для работы с корзиной
+        Shop ThisShop;
         public Customer(string Login, string Password) : base(Login, Password)
         {
             Position = "Покупатель";
-            ShopList = new List<Product>();
+            Functions.AddRange(new (string, Method)[]
+            {
+                ("Просмотреть информацию о себе", ShowSelf),
+                ("Добавить товар в корзину", AddProduct),
+                ("Изменить количество товара в корзине", EditCount),
+                ("Убрать товар из корзины", RemoveProduct),
+                ("Оформить заказ", FinalizeOrder)
+            });
             Console.Clear();
             Console.WriteLine("Введите электронный адрес, на который хотите получать чеки:");
             Email = Console.ReadLine().Trim();
         }
-        void ShowSelf()
+        private void ShowSelf()
         {
             Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"Данные пользователя {Email}");
@@ -51,13 +53,34 @@ namespace E_Shop
             Console.WriteLine("Нажмите любую кнопку...");
             Console.ReadKey();
         }
-        void AddProduct(Shop shop)
+        void AddProduct()
         {
             while (true)
             {
-                List<Product> shopProducts = new List<Product>();
+                if (ThisShop == null)
+                {
+                    List<Shop> shops = Helper.DeserializeShops();
+                    if (shops.Count == 0)
+                    {
+                        Console.WriteLine("Не найдено магазинов");
+                        Console.WriteLine("Нажмите любую кнопку...");
+                        Console.ReadKey();
+                        return;
+                    }
 
-                shopProducts.AddRange(shop.AttachedStorage.Products);
+                    List<string> shopNames = new List<string>();
+                    foreach (Shop shop in shops)
+                        shopNames.Add(shop.Name);
+                    shopNames.Add("Назад");
+                    ConsoleMenu shopMenu = new ConsoleMenu(shopNames.ToArray());
+                    int chooseShop = shopMenu.PrintMenu();
+                    if (chooseShop == shopNames.Count - 1) return;
+                    ThisShop = shops[chooseShop];
+                }
+
+                //получаем продукты из выбранного магазина
+                List<Product> shopProducts = new List<Product>();
+                shopProducts.AddRange(ThisShop.AttachedStorage.Products);
                 shopProducts.RemoveAll(p => p.Count == 0);
                 if (shopProducts.Count == 0)
                 {
@@ -71,13 +94,13 @@ namespace E_Shop
                 foreach (Product product in shopProducts)
                     productNames.Add($"Товар \"{product.Name}\" | Цена: {product.Price} рублей");
                 productNames.Add("Назад");
-
                 ConsoleMenu productMenu = new ConsoleMenu(productNames.ToArray());
                 int chooseProduct = productMenu.PrintMenu();
                 if (chooseProduct == productNames.Count - 1) break;
-                if (!ShopList.Contains(shop.AttachedStorage.Products[chooseProduct]))
+
+                if (!ShopList.Contains(ThisShop.AttachedStorage.Products[chooseProduct]))
                 {
-                    ShopList.Add(shop.AttachedStorage.Products[chooseProduct]);
+                    ShopList.Add(ThisShop.AttachedStorage.Products[chooseProduct]);
                     ShopList[^1].Count = 1;
                     Console.WriteLine("Товар добавлен в корзину");
                 }
@@ -107,9 +130,10 @@ namespace E_Shop
                 if (chooseProduct == productNames.Count - 1) break;
 
                 ShopList.RemoveAt(chooseProduct);
+                if (ShopList.Count == 0) ThisShop = null;
             }
         }
-        void EditCount(Shop shop)
+        void EditCount()
         {
             while (true)
             {
@@ -131,114 +155,40 @@ namespace E_Shop
                 if (chooseProduct == productNames.Count - 1) break;
 
                 //ищем на складе товар с такими же данными
-                Product some = shop.AttachedStorage.Products.Find
+                Product some = ThisShop.AttachedStorage.Products.Find
                     (p => p.Name == ShopList[chooseProduct].Name
                     && p.Category == ShopList[chooseProduct].Category
                     && p.Price == ShopList[chooseProduct].Price
                     && p.ShelfLife == ShopList[chooseProduct].ShelfLife);
-                ShopList[chooseProduct].Count = some.ChooseCountOfProducts();
+
+                int count;
+                do
+                {
+                    Console.Clear();
+                    Console.Write("Введите количество товара: ");
+                    count = Console.ReadLine().SafeParse();
+                }
+                while (count <= 0);
+                ShopList[chooseProduct].Count = count;
+                //ShopList[chooseProduct].Count = some.ChooseCountOfProducts();
             }
         }
-        void FinalizeOrder(Shop shop)
+        void FinalizeOrder()
         {
             if (ShopList.Count != 0)
             {
-                Helper.SerializeReceipt(shop, this);
+                List<Shop> shops = Helper.DeserializeShops();
+                shops[shops.FindIndex(s => s == ThisShop)].AddReceipt(this);
+                Helper.SerializeShops(shops);
+
                 ShopList.Clear();
                 ShopList.TrimExcess();
-                Console.WriteLine("Ваш заказ оформлен!");
-                Console.WriteLine("Нажмите любую кнопку...");
-                Console.ReadKey();
+                ThisShop = null;
+                Console.WriteLine("Ваш заказ отправлен на валидацию!");
             }
-            else
-            {
-                Console.WriteLine("Ваша корзина пуста");
-                Console.WriteLine("Нажмите любую кнопку...");
-                Console.ReadKey();
-            }
-        }
-        void ShoppingBasket()
-        {
-            while (true)
-            {
-                List<Shop> shops = Helper.DeserializeShops();
-                if (shops.Count == 0)
-                {
-                    Console.WriteLine("Не найдено магазинов");
-                    Console.WriteLine("Нажмите любую кнопку...");
-                    Console.ReadKey();
-                    return;
-                }
-
-                List<string> shopNames = new List<string>();
-                foreach (Shop shop in shops)
-                    shopNames.Add(shop.Name);
-                shopNames.Add("Назад");
-                ConsoleMenu shopMenu = new ConsoleMenu(shopNames.ToArray());
-                int chooseShop = shopMenu.PrintMenu();
-                if (chooseShop == shopNames.Count - 1) break;
-
-                string[] basket =
-                {
-                "Добавить товар в корзину",
-                "Удалить товар из корзины",
-                "Изменить количество товара",
-                "Оформить заказ",
-                "Выйти из меню"
-                };
-                ConsoleMenu basketMenu = new ConsoleMenu(basket);
-                while (true)
-                {
-                    int choose = basketMenu.PrintMenu();
-                    Console.Clear();
-                    switch (choose)
-                    {
-                        case 0:
-                            AddProduct(shops[chooseShop]);
-                            break;
-                        case 1:
-                            RemoveProduct();
-                            break;
-                        case 2:
-                            EditCount(shops[chooseShop]);
-                            break;
-                        case 3:
-                            FinalizeOrder(shops[chooseShop]);
-                            break;
-                        default:
-                            return;
-                    }
-                }
-
-            }
-        }
-
-        public override int MainMenu()
-        {
-            string[] functions =
-            {
-                "Просмотреть информацию о себе",
-                "Оформление заказа (корзина)",
-                "Выйти из аккаунта",
-                "Выйти из приложения"
-            };
-            ConsoleMenu mainMenu = new ConsoleMenu(functions);
-            int chooseFunc = mainMenu.PrintMenu();
-            Console.Clear();
-            switch (chooseFunc)
-            {
-                case 0:
-                    ShowSelf();
-                    break;
-                case 1:
-                    ShoppingBasket();
-                    break;
-                default:
-                    if (chooseFunc == functions.Length - 1)
-                        return -1;
-                    else return 1;
-            }
-            return 0;
+            else Console.WriteLine("Ваша корзина пуста");
+            Console.WriteLine("Нажмите любую кнопку...");
+            Console.ReadKey();
         }
     }
 }

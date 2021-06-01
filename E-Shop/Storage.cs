@@ -23,13 +23,14 @@ namespace E_Shop
         Storage()
         {
             Products = new List<Product>();
-            OnChangeProducts += EditShopData;
+            OnChangeProducts += Storage_OnChangeProducts;
         }
         public Storage(string Name) : this()
         {
             this.Name = Name;
         }
-        void EditShopData()
+
+        private void Storage_OnChangeProducts()
         {
             List<Shop> shops = Helper.DeserializeShops();
             for (int i = 0; i < shops.Count; i++)

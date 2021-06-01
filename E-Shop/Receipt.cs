@@ -7,10 +7,8 @@ namespace E_Shop
     [Serializable]
     class Receipt
     {
-        public int ID { get; } = 0;
         public string ShopName { get; set; }
-        public string CustomerFILogin { get; set; }
-        public Customer Customer { get; set; }
+        public string FILogin { get; set; }
         public List<Product> BuyProducts { get; set; }
         public int FullPrice 
         {
@@ -22,23 +20,15 @@ namespace E_Shop
                 return price;
             }
         }
-        public Receipt()
+        Receipt()
         {
-            ID = NextID();
             BuyProducts = new List<Product>();
         }
-        public Receipt(Customer customer, Shop shop) : this()
+        public Receipt(Customer c, Shop shop) : this()
         {
-            Customer = customer;
-            BuyProducts = customer.ShopList;
+            FILogin = $"{c.Login} - {c.FirstName} {c.LastName} {c.Patronomic}";
+            BuyProducts = c.ShopList;
             ShopName = shop.Name;
-        }
-        int NextID()
-        {
-            List<Receipt> r = Helper.DeserializeReceipt();
-            if (r.Count == 0)
-                return 0;
-            return r[^1].ID + 1;
         }
         public int PriceForProducts(Product product)
         {
