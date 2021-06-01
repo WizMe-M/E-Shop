@@ -46,6 +46,7 @@ namespace E_Shop
 
         public Account()
         {
+            Functions = new List<(string, Method)>();
             birthday = DateTime.Now.ToShortDateString();
             age = 0;
             study = 0;
