@@ -7,8 +7,6 @@ namespace E_Shop
     [Serializable]
     class Shop
     {
-        delegate void ChangeStorage();
-        event ChangeStorage OnChangeStorage;
         public string Name { get; set; }
 
         Storage storage;
@@ -18,15 +16,14 @@ namespace E_Shop
             set
             {
                 storage = value;
-                OnChangeStorage();
+                Shop_OnChangeStorage();
             }
         }
-        public List<Receipt> UnregisteredOrders { get; set; }
+        public List<Receipt> UnregisteredOrders { get; set; } = new List<Receipt>();
         Shop()
         {
             UnregisteredOrders = new List<Receipt>();
             ChooseAttachedStorage();
-            OnChangeStorage += Shop_OnChangeStorage;
         }
         public Shop(string Name) : this()
         {
@@ -80,14 +77,14 @@ namespace E_Shop
 
             List<string> receiptNames = new List<string>();
             foreach (Receipt r in UnregisteredOrders)
-                receiptNames.Add($" {r.FILogin} | {Name} | {r.FullPrice} рублей");
+                receiptNames.Add($" {r.EMail} | {Name} | {r.FullPrice} рублей");
             receiptNames.Add("Назад");
 
             ConsoleMenu receiptMenu = new ConsoleMenu(receiptNames.ToArray());
             int choose = receiptMenu.PrintMenu();
             if (choose == receiptNames.Count - 1) return null;
 
-            //вычитаем из магазина N товаров
+            //вычитаем из магазина N товаров из списка
             foreach (Product product in UnregisteredOrders[choose].BuyProducts)
             {
                 //ищем товар на складе, совпадающий по всем параметрам (кроме количества, разумеется)
@@ -98,8 +95,11 @@ namespace E_Shop
                     && p.ShelfLife == product.ShelfLife);
 
                 if (i != -1)
-                    if (AttachedStorage.Products[i].Count < product.Count)
+                    if (AttachedStorage.Products[i].Count > product.Count)
+                    {
                         AttachedStorage.Products[i].Count -= product.Count;
+                        AttachedStorage = AttachedStorage;
+                    }
                     else return null;
             }
             return UnregisteredOrders[choose];

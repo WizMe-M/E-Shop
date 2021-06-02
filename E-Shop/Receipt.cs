@@ -8,7 +8,7 @@ namespace E_Shop
     class Receipt
     {
         public string ShopName { get; set; }
-        public string FILogin { get; set; }
+        public string EMail { get; set; }
         public List<Product> BuyProducts { get; set; }
         public int FullPrice 
         {
@@ -26,7 +26,7 @@ namespace E_Shop
         }
         public Receipt(Customer c, Shop shop) : this()
         {
-            FILogin = $"{c.Login} - {c.FirstName} {c.LastName} {c.Patronomic}";
+            EMail = c.Email;
             BuyProducts = c.ShopList;
             ShopName = shop.Name;
         }

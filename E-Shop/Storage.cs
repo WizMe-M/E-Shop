@@ -7,8 +7,6 @@ namespace E_Shop
     [Serializable]
     class Storage
     {
-        delegate void ChangeProducts();
-        event ChangeProducts OnChangeProducts;
         public string Name { get; set; }
         List<Product> products = new List<Product>();
         public List<Product> Products
@@ -17,13 +15,12 @@ namespace E_Shop
             set
             {
                 products = value;
-                OnChangeProducts();
+                Storage_OnChangeProducts();
             }
         }
         Storage()
         {
             Products = new List<Product>();
-            OnChangeProducts += Storage_OnChangeProducts;
         }
         public Storage(string Name) : this()
         {
@@ -48,6 +45,7 @@ namespace E_Shop
             if (index == -1)
                 Products.Add(product);
             else Products[index].Count += product.Count;
+            Products = Products;
         }
     }
 }

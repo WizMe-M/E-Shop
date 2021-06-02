@@ -16,48 +16,56 @@ namespace E_Shop
                 ("Добавить магазин", AddShop),
                 ("Оформить квитанцию", Checkout)});
             AddShop();
+            Console.Clear();
+            Console.WriteLine("Выберите магазин, в котором будете работать:");
             WorkPlace = Helper.ChooseShop().Name;
         }
         private void AddShop()
         {
             Console.WriteLine("Введите название магазина:");
             string name = Console.ReadLine().Trim();
-            Helper.AddShopToBD(new Shop(name));            
+            Helper.AddShopToBD(new Shop(name));
         }
         private void Checkout()
         {
-            while (true)
+            try
             {
                 List<Shop> shops = Helper.DeserializeShops();
                 int shopIndex = shops.FindIndex(s => s.Name == WorkPlace);
                 Receipt registeredReceipt = shops[shopIndex].RegisterReceipt();
                 if (registeredReceipt != null)
                 {
-                    shops[shopIndex].UnregisteredOrders.Remove(registeredReceipt);
+
+
                     //создаем текст квитанции
                     string message = $"\t#Квитанция магазина {shops[shopIndex].Name}#" +
-                        $"\n--------------------------------------";
-                    foreach (Product p in registeredReceipt.BuyProducts)                    
+                        $"\n------------------------------------------------------------------------------------------------------------------";
+                    foreach (Product p in registeredReceipt.BuyProducts)
                         message += $"\n{p.Name} | {p.Category} | {p.Price} р. за один товар, " +
-                            $"{registeredReceipt.PriceForProducts(p)} р. за {p.Count} товаров\n";                    
-                    message += $"\n--------------------------------------" +
-                        $"\tОбщая сумма заказа: {registeredReceipt.FullPrice} рублей";
+                            $"{registeredReceipt.PriceForProducts(p)} р. за {p.Count} товаров\n";
+                    message += $"\n------------------------------------------------------------------------------------------------------------------" +
+                        $"\n\tОбщая сумма заказа: {registeredReceipt.FullPrice} рублей";
 
+                    
+                    
+                    Mail mail = new Mail(registeredReceipt.EMail, message);
+                    mail.SendMessage();
+
+
+                    shops[shopIndex].UnregisteredOrders.Remove(registeredReceipt);
                     Helper.SerializeShops(shops);
-
-                    //здесь отправляем сообщение "на почту" (нужен метод)
-                    Console.WriteLine(message);
-
                     Thread.Sleep(1000);
                     Console.WriteLine("Квитанция отправлена на почту покупателю");
                 }
-                else
-                {
-                    Console.WriteLine("Нельзя оформить заказ:");
-                    Console.WriteLine("Некоторые товары из списка не соответствуют количеству на складе.");
-                }
+                else Console.WriteLine("Нельзя оформить заказ");
                 Console.WriteLine("Нажмите любую кнопку...");
                 Console.ReadKey();
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Thread.Sleep(1500);
             }
         }
         public override void OnDeserializing()

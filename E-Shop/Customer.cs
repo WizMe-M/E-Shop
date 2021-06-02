@@ -24,7 +24,7 @@ namespace E_Shop
                 email = value;
             }
         }
-        public List<Product> ShopList { get; set; }
+        public List<Product> ShopList { get; set; } = new List<Product>();
         //экземпляр магазина для работы с корзиной
         Shop ThisShop;
         public Customer(string Login, string Password) : base(Login, Password)
@@ -176,11 +176,10 @@ namespace E_Shop
             if (ShopList.Count != 0)
             {
                 List<Shop> shops = Helper.DeserializeShops();
-                shops[shops.FindIndex(s => s == ThisShop)].AddReceipt(this);
+                shops[shops.FindIndex(s => s.Name == ThisShop.Name)].AddReceipt(this);
                 Helper.SerializeShops(shops);
 
                 ShopList.Clear();
-                ShopList.TrimExcess();
                 ThisShop = null;
                 Console.WriteLine("Ваш заказ отправлен на валидацию!");
             }
