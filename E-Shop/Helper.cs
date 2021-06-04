@@ -81,6 +81,7 @@ namespace E_Shop
                             "Кадровик" => (Personnel)acc,
                             "Кладовщик" => (Warehouseman)acc,
                             "Продавец" => (Seller)acc,
+                            "Бухгалтер" => (Accountant)acc,
                             "Покупатель" => (Customer)acc,
                             _ => throw new Exception("Что-то пошло не так..." +
                             "\nСудя по всему, аккаунт имеет неправильные настройки!"),
@@ -112,6 +113,34 @@ namespace E_Shop
             return shops[choose];
         }
 
+
+
+        public static void AddReceiptToBD(Customer customer, Shop shop)
+        {
+            List<Receipt> receipts = DeserializeReceipt();
+            receipts.Add(new Receipt(customer, shop));
+            SerializeReceipt(receipts);
+        }
+        public static void SerializeReceipt(List<Receipt> receipts)
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(pathReceipt, FileMode.Truncate);
+            formatter.Serialize(fileStream, receipts);
+            fileStream.Close();
+        }
+        public static List<Receipt> DeserializeReceipt()
+        {
+            List<Receipt> receipts = new List<Receipt>();
+            BinaryFormatter formatter = new BinaryFormatter();
+            using FileStream fileStream = new FileStream(pathReceipt, FileMode.OpenOrCreate);
+            if (fileStream.Length != 0)
+                receipts = (List<Receipt>)formatter.Deserialize(fileStream);
+            fileStream.Close();
+            return receipts;
+        }
+
+
+
         public static List<Shop> DeserializeShops()
         {
             List<Shop> shops = new List<Shop>();
@@ -136,6 +165,8 @@ namespace E_Shop
             fileStream.Close();
         }
 
+
+
         public static void SerializeStorage(List<Storage> storage)
         {
             BinaryFormatter formatter = new BinaryFormatter();
@@ -159,6 +190,9 @@ namespace E_Shop
             fileStream.Close();
             return storages;
         }
+
+
+
 
         public static void SerializeAccount(List<Account> accounts)
         {

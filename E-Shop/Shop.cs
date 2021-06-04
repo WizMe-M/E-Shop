@@ -8,7 +8,6 @@ namespace E_Shop
     class Shop
     {
         public string Name { get; set; }
-
         Storage storage;
         public Storage AttachedStorage
         {
@@ -19,10 +18,8 @@ namespace E_Shop
                 Shop_OnChangeStorage();
             }
         }
-        public List<Receipt> UnregisteredOrders { get; set; } = new List<Receipt>();
         Shop()
         {
-            UnregisteredOrders = new List<Receipt>();
             ChooseAttachedStorage();
         }
         public Shop(string Name) : this()
@@ -60,49 +57,6 @@ namespace E_Shop
             ConsoleMenu categoryMenu = new ConsoleMenu(storageNames.ToArray());
             int chooseStorage = categoryMenu.PrintMenu();
             AttachedStorage = storages[chooseStorage];
-        }
-        public void AddReceipt(Customer customer)
-        {
-            UnregisteredOrders.Add(new Receipt(customer, this));
-        }
-        public Receipt RegisterReceipt()
-        {
-            if (UnregisteredOrders.Count == 0)
-            {
-                Console.WriteLine("Нет неоформленных квитанций для данного магазина");
-                Console.WriteLine("Нажмите любую кнопку...");
-                Console.ReadKey();
-                return null;
-            }
-
-            List<string> receiptNames = new List<string>();
-            foreach (Receipt r in UnregisteredOrders)
-                receiptNames.Add($" {r.EMail} | {Name} | {r.FullPrice} рублей");
-            receiptNames.Add("Назад");
-
-            ConsoleMenu receiptMenu = new ConsoleMenu(receiptNames.ToArray());
-            int choose = receiptMenu.PrintMenu();
-            if (choose == receiptNames.Count - 1) return null;
-
-            //вычитаем из магазина N товаров из списка
-            foreach (Product product in UnregisteredOrders[choose].BuyProducts)
-            {
-                //ищем товар на складе, совпадающий по всем параметрам (кроме количества, разумеется)
-                int i = AttachedStorage.Products.FindIndex
-                    (p => p.Name == product.Name
-                    && p.Category == product.Category
-                    && p.Price == product.Price
-                    && p.ShelfLife == product.ShelfLife);
-
-                if (i != -1)
-                    if (AttachedStorage.Products[i].Count > product.Count)
-                    {
-                        AttachedStorage.Products[i].Count -= product.Count;
-                        AttachedStorage = AttachedStorage;
-                    }
-                    else return null;
-            }
-            return UnregisteredOrders[choose];
         }
     }
 }

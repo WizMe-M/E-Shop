@@ -23,7 +23,6 @@ namespace E_Shop
                     case 0:
                         user = Account.Registration("Покупатель");
 
-                        //вынести в отдельную функцию
                         List<Account> accounts = Helper.DeserializeAccount();
                         accounts.Add(user);
                         Helper.SerializeAccount(accounts);
@@ -39,12 +38,7 @@ namespace E_Shop
             }
         }
 
-        static void MainFunction(Account account)
-        {
-
-        }
-
-        //заготовка на переделку главной функции акков (неплохо бы делегаты для них сделать....)
+        //досрочное завершение программы
         public static void Terminate()
         {
             Environment.Exit(0);

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
+
 namespace E_Shop
 {
     [Serializable]
@@ -175,22 +177,18 @@ namespace E_Shop
         {
             if (ShopList.Count != 0)
             {
-                List<Shop> shops = Helper.DeserializeShops();
-                shops[shops.FindIndex(s => s.Name == ThisShop.Name)].AddReceipt(this);
-                Helper.SerializeShops(shops);
-
+                Helper.AddReceiptToBD(this, ThisShop);
                 ShopList.Clear();
                 ThisShop = null;
                 Console.WriteLine("Ваш заказ отправлен на валидацию!");
             }
             else Console.WriteLine("Ваша корзина пуста");
-            Console.WriteLine("Нажмите любую кнопку...");
-            Console.ReadKey();
+            Thread.Sleep(1000);
         }
 
         public override void OnDeserializing()
         {
-            Functions = new List<(string, Method)>();
+            base.OnDeserializing();
             Functions.AddRange(new (string, Method)[] {
                 ("Просмотреть информацию о себе", ShowSelf),
                 ("Добавить товар в корзину", AddProduct),

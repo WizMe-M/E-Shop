@@ -11,7 +11,9 @@ namespace E_Shop
     abstract class Account
     {
         [NonSerialized]
-        public static string[] accountTypes = { "Покупатель", "Администратор", "Кадровик", "Кладовщик", "Продавец", "Назад" };
+        protected static string[] accountTypes = { "Администратор", "Кадровик", "Кладовщик", "Продавец", "Бухгалтер", "Покупатель", "Назад" };
+        [NonSerialized]
+        protected double[] Salaries = new double[6] { 80000.0, 110000.0, 30000.0, 20000.0, 90000.0, 0.0 };
         public delegate void Method();
 
         [NonSerialized]
@@ -34,18 +36,33 @@ namespace E_Shop
         int study;
         public int StudyYears { get; set; } = 0;
         public int WorkExperience { get; set; } = 0;
+
         string place;
         public string WorkPlace
         {
             get { return place; }
             set
             {
-                if (this is Admin || this is Personnel)
+                if (this is Admin || this is Personnel || this is Accountant)
                     place = "Офис";
                 else place = value;
             }
         }
-        public double Salary { get; set; } = 0;
+        public double Salary
+        {
+            get
+            {
+                int index = 0;
+                for (int i = 0; i < accountTypes.Length - 1; i++)
+                    if (Position == accountTypes[i])
+                    {
+                        index = i;
+                        break;
+                    }
+                return Salaries[index];
+            }
+        }
+
 
         public Account()
         {
@@ -60,7 +77,11 @@ namespace E_Shop
             this.Password = Password;
         }
 
-        public abstract void OnDeserializing();
+        public virtual void OnDeserializing()
+        {
+            Functions = new List<(string, Method)>();
+            Salaries = new double[6] { 80000.0, 110000.0, 30000.0, 20000.0, 90000.0, 0.0 };
+        }
         public static Account Registration(string role)
         {
             Console.Clear();
@@ -74,6 +95,7 @@ namespace E_Shop
                 "Администратор" => new Admin(l, p),
                 "Кадровик" => new Personnel(l, p),
                 "Кладовщик" => new Warehouseman(l, p),
+                "Бухгалтер" => new Accountant(l, p),
                 "Продавец" => new Seller(l, p),
                 _ => null,
             };

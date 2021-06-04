@@ -223,7 +223,7 @@ namespace E_Shop
 
         public override void OnDeserializing()
         {
-            Functions = new List<(string, Method)>();
+            base.OnDeserializing();
             Functions.AddRange(new (string, Method)[] {
                     ("Просмотреть данные пользователя", ShowAccount),
                     ("Изменить данные пользователя", EditAccount),

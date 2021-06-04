@@ -309,7 +309,7 @@ namespace E_Shop
         }
         public override void OnDeserializing()
         {
-            Functions = new List<(string, Method)>();
+            base.OnDeserializing();
             Functions.AddRange(new (string, Method)[] {
                 ("Создать склад", CreateStorage),
                 ("Просмотреть товар", ShowProduct),
