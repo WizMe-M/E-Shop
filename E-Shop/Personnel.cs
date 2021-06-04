@@ -122,9 +122,6 @@ namespace E_Shop
                         case 6:
                             accounts[index].WorkExperience = int.Parse(changedData);
                             break;
-                        case 7:
-                            accounts[index].Salary = double.Parse(changedData);
-                            break;
                     }
                     Helper.SerializeAccount(accounts);
                 }
@@ -256,7 +253,7 @@ namespace E_Shop
         }
         public override void OnDeserializing()
         {
-            Functions = new List<(string, Method)>();
+            base.OnDeserializing();
             Functions.AddRange(new (string, Method)[] {
                 ("Просмотреть данные сотрудников", ShowUsers),
                 ("Изменить данные сотрудников", EditUsers),
