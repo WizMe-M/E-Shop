@@ -63,7 +63,7 @@ namespace E_Shop
             set
             {
                 string pattern = @"^(?!.*[A-Z]{3,})(?=.*[A-Z](?=.*[A-Z](?=.*[A-Z])))(?=.*\d(?=.*\d(?=.*\d)))(?=.*[@$!%*?&](?=.*[@$!%*?&]))[A-Za-z\d@$!%*?&]{8,}$";
-                while(!Regex.IsMatch(value, pattern))
+                while (!Regex.IsMatch(value, pattern))
                 {
                     Console.Clear();
                     Console.WriteLine("Пароль должен быть написан латинскими буквами, иметь три заглавные буквы (не подряд), " +
@@ -88,7 +88,8 @@ namespace E_Shop
                 while (!Regex.IsMatch(value, pattern))
                 {
                     Console.Clear();
-                    Console.WriteLine("Фамилия должно состоять из одного слова, начинаться с заглавной буквы и состоять целиком либо из латиницы, либо из кириллицы.");
+                    Console.WriteLine("Фамилия должно состоять из одного слова, начинаться с заглавной буквы и " +
+                        "состоять целиком либо из латиницы, либо из кириллицы.");
                     Console.Write("Введите фамилию ещё раз: ");
                     value = Console.ReadLine().Trim();
                 }
@@ -109,7 +110,8 @@ namespace E_Shop
                 while (!Regex.IsMatch(value, pattern))
                 {
                     Console.Clear();
-                    Console.WriteLine("Имя должно состоять из одного слова, начинаться с заглавной буквы и состоять целиком либо из латиницы, либо из кириллицы.");
+                    Console.WriteLine("Имя должно состоять из одного слова, начинаться с заглавной буквы и " +
+                        "состоять целиком либо из латиницы, либо из кириллицы.");
                     Console.Write("Введите имя ещё раз: ");
                     value = Console.ReadLine().Trim();
                 }
@@ -130,7 +132,8 @@ namespace E_Shop
                 while (!Regex.IsMatch(value, pattern))
                 {
                     Console.Clear();
-                    Console.WriteLine("Отчество должно состоять из одного слова, начинаться с заглавной буквы и состоять целиком либо из латиницы, либо из кириллицы.");
+                    Console.WriteLine("Отчество должно состоять из одного слова, начинаться с заглавной буквы и " +
+                        "состоять целиком либо из латиницы, либо из кириллицы.");
                     Console.Write("Введите отчество ещё раз: ");
                     value = Console.ReadLine().Trim();
                 }
@@ -151,14 +154,13 @@ namespace E_Shop
                 (?:0?[1,3-9]|1[0-2])\2))(?:(?:1[6-9]|[2-9]\d)?\d{2})$|^(?:29(\/|-|\.)0?2\3(?:(?:(?:1[6-9]|[2-9]\d)?
                 (?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00))))
                 $|^(?:0?[1-9]|1\d|2[0-8])(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:(?:1[6-9]|[2-9]\d)?\d{2})$";
-                do while (!Regex.IsMatch(value, pattern))
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Принимаются даты формата дд.мм.гггг или дд/мм/гггг или дд-мм-гггг, в том числе високосные года.");
-                        Console.Write("Введите дату рождения ещё раз: ");
-                        value = Console.ReadLine().Trim();
-                    }
-                while (DateTime.Parse(value).Year < 1960 || DateTime.Parse(value) > DateTime.UtcNow);
+                while (!Regex.IsMatch(value, pattern) || (DateTime.Parse(value).Year < 1960 || DateTime.Parse(value) > DateTime.UtcNow))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Принимаются даты формата дд.мм.гггг или дд/мм/гггг или дд-мм-гггг, в том числе високосные года.");
+                    Console.Write("Введите дату рождения ещё раз: ");
+                    value = Console.ReadLine().Trim();
+                }
                 birthday = DateTime.Parse(value);
             }
         }
@@ -242,19 +244,19 @@ namespace E_Shop
             {
                 if (this is Admin || this is Personnel || this is Accountant)
                 {
-                    if (value != "ОФис")
+                    if (value != "Офис")
                     {
                         Console.Clear();
                         Console.WriteLine("Сотрудникам, находящимся на должностях: \nадминистратор, кадровик и бухгалтер " +
                             "автоматически присваивается место работы \"Офис\"");
                         Thread.Sleep(500);
+                        value = "Офис";
                     }
-                    place = "Офис";
                 }
                 else
                 {
                     string pattern = "(^(?:[A-Za-z `\']+)$)|(^(?:[А-Яа-яёЁ \"]+)$)";
-                    while(!Regex.IsMatch(value, pattern))
+                    while (!Regex.IsMatch(value, pattern))
                     {
                         Console.Clear();
                         Console.WriteLine("Место работы пишется латиницей (допускается ввод апострофа и/или одинарной кавычки) " +
@@ -262,8 +264,8 @@ namespace E_Shop
                         Console.Write("Введите место работы: ");
                         value = Console.ReadLine().Trim();
                     }
-                    place = value;
                 }
+                place = value;
             }
         }
 
@@ -278,7 +280,7 @@ namespace E_Shop
             Age = 18;
             StudyYears = 0;
             WorkExperience = 0;
-            WorkPlace = "Не указано";
+            WorkPlace = "Офис";
         }
         public Account(string Login, string Password) : this()
         {
@@ -311,10 +313,10 @@ namespace E_Shop
             account.Password = Console.ReadLine().Trim();
             Console.Clear();
             Console.Write("Введите фамилию: ");
-            account.FirstName = Console.ReadLine().Trim();
+            account.LastName = Console.ReadLine().Trim();
             Console.Clear();
             Console.Write("Введите имя: ");
-            account.LastName = Console.ReadLine().Trim();
+            account.FirstName = Console.ReadLine().Trim();
             Console.Clear();
             Console.Write("Введите отчество: ");
             account.Patronomic = Console.ReadLine().Trim();

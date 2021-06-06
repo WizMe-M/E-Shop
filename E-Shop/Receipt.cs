@@ -62,7 +62,7 @@ namespace E_Shop
                     && p.ShelfLife == product.ShelfLife);
 
                 if (i != -1)
-                    if (shops[shopIndex].AttachedStorage.Products[i].Count > product.Count)
+                    if (shops[shopIndex].AttachedStorage.Products[i].Count >= product.Count)
                     {
                         shops[shopIndex].AttachedStorage.Products[i].Count -= product.Count;
                         shops[shopIndex].AttachedStorage = shops[shopIndex].AttachedStorage;

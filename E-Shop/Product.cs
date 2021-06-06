@@ -100,21 +100,21 @@ namespace E_Shop
         public Product()
         {
             Console.Clear();
-            Console.WriteLine("Введите название товара:");
+            Console.Write("Введите название товара: ");
             Name = Console.ReadLine().Trim();
 
             ChangeCategory();
             
             Console.Clear();
-            Console.WriteLine("Введите цену товара:");
-            Price = int.Parse(Console.ReadLine().Trim());
+            Console.Write("Введите цену товара: ");
+            Price = Console.ReadLine().SafeParseDouble();
             
             Console.Clear();
-            Console.WriteLine("Введите количество товара:");
-            Count = int.Parse(Console.ReadLine().Trim());
+            Console.Write("Введите количество товара: ");
+            Count = Console.ReadLine().SafeParseInt();
             
             Console.Clear();
-            Console.WriteLine("Введите срок годности товара (до какого числа):");
+            Console.Write("Введите срок годности товара (до какого числа): ");
             ShelfLife = Console.ReadLine().Trim();
         }
         //public Product(string Name, string Category, int Price, int Count, string ShelfLife) : this()

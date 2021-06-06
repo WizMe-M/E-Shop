@@ -228,41 +228,11 @@ namespace E_Shop
             BinaryFormatter formatter = new BinaryFormatter();
             using FileStream fileStream = new FileStream(pathAccounts, FileMode.Open);
             if (fileStream.Length != 0)
-                accounts = ((List<Account>)formatter.Deserialize(fileStream));
+                accounts = (List<Account>)formatter.Deserialize(fileStream);
             fileStream.Close();
             for (int i = 0; i < accounts.Count; i++)
                 accounts[i].OnDeserializing();
             return accounts;
-        }
-
-
-
-        ///delete this shit
-        public static bool Check(string s, string type)
-        {
-            //эти проверки должны быть в свойствах Account
-            string pattern;
-            s = s.Trim();
-            switch (type)
-            {
-                case "логин":
-
-                    break;
-
-                case "пароль":
-                    pattern = @"^((?<![A-Z])[A-Z]{3}(?![A-Z]))(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$";
-                    if (!Regex.IsMatch(s, pattern))
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Пароль должен быть минимум из восьми символов, содержать три заглавные буквы не подряд, " +
-                            "минимум 2 специальных символа и минимум три цифры (буквы должны быть латинского алфавита)." +
-                            "\nВведите пароль ещё раз:");
-                        return false;
-                    }
-                    break;
-            }
-
-            return true;
         }
     }
 }
