@@ -9,7 +9,7 @@ namespace E_Shop
     [Serializable]
     class Seller : Account
     {
-        public Seller(string Login, string Password) : base(Login, Password)
+        public Seller() : base()
         {
             Position = "Продавец";
             Functions.AddRange(new (string, Method)[] {
@@ -17,6 +17,14 @@ namespace E_Shop
                 ("Оформить квитанцию", Checkout)});
             WorkPlace = "Магазин";
         }
+        //public Seller(string Login, string Password) : base(Login, Password)
+        //{
+        //    Position = "Продавец";
+        //    Functions.AddRange(new (string, Method)[] {
+        //        ("Добавить магазин", AddShop),
+        //        ("Оформить квитанцию", Checkout)});
+        //    WorkPlace = "Магазин";
+        //}
         private void AddShop()
         {
             Console.WriteLine("Введите название магазина:");

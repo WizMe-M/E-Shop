@@ -5,10 +5,11 @@ using System.Threading;
 
 namespace E_Shop
 {
+    //Бухгалтер
     [Serializable]
     class Accountant : Account
     {
-        public Accountant(string Login, string Password) : base(Login, Password)
+        public Accountant() : base()
         {
             Position = "Бухгалтер";
             Functions.AddRange(new (string, Method)[] {
@@ -16,6 +17,14 @@ namespace E_Shop
                 ("Посмотреть доходы от продаж", CompanyIncome),
                 ("Посмотреть выручку", CompanyProceeds)});
         }
+        //public Accountant(string Login, string Password) : base(Login, Password)
+        //{
+        //    Position = "Бухгалтер";
+        //    Functions.AddRange(new (string, Method)[] {
+        //        ("Посмотреть доходы сотрудников", EmployeeIncome),
+        //        ("Посмотреть доходы от продаж", CompanyIncome),
+        //        ("Посмотреть выручку", CompanyProceeds)});
+        //}
 
         private void EmployeeIncome()
         {

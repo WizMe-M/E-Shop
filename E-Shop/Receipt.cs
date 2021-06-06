@@ -5,6 +5,7 @@ using System.Threading;
 
 namespace E_Shop
 {
+    //Квитанция (заказ)
     [Serializable]
     class Receipt
     {
@@ -15,11 +16,11 @@ namespace E_Shop
         public string EMail { get; set; }
         public string CustomerFIO { get; set; }
         public List<Product> BuyProducts { get; set; }
-        public int FullPrice 
+        public double FullPrice 
         {
             get
             {
-                int price = 0;
+                double price = 0;
                 foreach (Product product in BuyProducts)
                     price += PriceForProducts(product);
                 return price;
@@ -38,9 +39,11 @@ namespace E_Shop
             BuyProducts = c.ShopList;
             ShopName = shop.Name;
         }
-        public int PriceForProducts(Product product)
+        public double PriceForProducts(Product product)
         {
-            int fullPrice = product.Price * product.Count;
+            double fullPrice = product.Price * product.Count;
+            if (DateTime.Parse(product.ShelfLife) >= DateTime.Now)
+                fullPrice /= 2;
             return fullPrice;
         }
         public bool RegisterReceipt()

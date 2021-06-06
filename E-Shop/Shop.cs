@@ -7,7 +7,19 @@ namespace E_Shop
     [Serializable]
     class Shop
     {
-        public string Name { get; set; }
+        string name;
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+
+                name = value;
+            }
+        }
         Storage storage;
         public Storage AttachedStorage
         {

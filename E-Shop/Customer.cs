@@ -6,6 +6,7 @@ using System.Threading;
 
 namespace E_Shop
 {
+    //Покупатель (не сотрудник)
     [Serializable]
     class Customer : Account
     {
@@ -20,7 +21,7 @@ namespace E_Shop
                 while (!Regex.IsMatch(value, pattern))
                 {
                     Console.Clear();
-                    Console.WriteLine("Введите корректный адрес электронной почты:");
+                    Console.Write("Введите корректный адрес электронной почты: ");
                     value = Console.ReadLine().Trim();
                 }
                 email = value;
@@ -29,7 +30,7 @@ namespace E_Shop
         public List<Product> ShopList { get; set; } = new List<Product>();
         //экземпляр магазина для работы с корзиной
         Shop ThisShop;
-        public Customer(string Login, string Password) : base(Login, Password)
+        public Customer() : base()
         {
             Position = "Покупатель";
             Functions.AddRange(new (string, Method)[] {
@@ -38,10 +39,21 @@ namespace E_Shop
                 ("Изменить количество товара в корзине", EditCount),
                 ("Убрать товар из корзины", RemoveProduct),
                 ("Оформить заказ", FinalizeOrder)});
-            Console.Clear();
-            Console.WriteLine("Введите электронный адрес, на который хотите получать чеки:");
-            Email = Console.ReadLine().Trim();
         }
+
+        //public Customer(string Login, string Password) : base(Login, Password)
+        //{
+        //    Position = "Покупатель";
+        //    Functions.AddRange(new (string, Method)[] {
+        //        ("Просмотреть информацию о себе", ShowSelf),
+        //        ("Добавить товар в корзину", AddProduct),
+        //        ("Изменить количество товара в корзине", EditCount),
+        //        ("Убрать товар из корзины", RemoveProduct),
+        //        ("Оформить заказ", FinalizeOrder)});
+        //    Console.Clear();
+        //    Console.WriteLine("Введите электронный адрес, на который хотите получать чеки:");
+        //    Email = Console.ReadLine().Trim();
+        //}
         private void ShowSelf()
         {
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -166,7 +178,7 @@ namespace E_Shop
                 {
                     Console.Clear();
                     Console.Write("Введите количество товара: ");
-                    count = Console.ReadLine().SafeParse();
+                    count = int.Parse(Console.ReadLine());
                 }
                 while (count <= 0);
                 ShopList[chooseProduct].Count = count;

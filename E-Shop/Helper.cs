@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Threading;
 
 namespace E_Shop
 {
@@ -14,18 +15,6 @@ namespace E_Shop
         public static string pathStorage = Directory.GetCurrentDirectory() + @"\E-Shop\storage.bd";
         public static string pathReceipt = Directory.GetCurrentDirectory() + @"\E-Shop\receipt.bd";
         public static string pathShop = Directory.GetCurrentDirectory() + @"\E-Shop\shop.bd";
-     
-        public static int SafeParse(this string s)
-        {
-            int i;
-            do
-            {
-                int.TryParse(s, out int res);
-                i = res;
-                //хуйня
-            } while (i == 0);
-            return i;
-        }
 
         public static void FirstLaunch()
         {
@@ -34,7 +23,12 @@ namespace E_Shop
             {
                 Console.WriteLine("Запускаю протокол первичного запуска...");
                 Console.WriteLine($"Зарегистрирован новый пользователь (администратор)");
-                Admin admin = new Admin("admin", "admin");
+                Admin admin = new Admin
+                {
+                    Login = "admin",
+                    Password = "PassWorD123!!"
+                };
+
                 Console.WriteLine($"Ваши:\nЛогин\t- {admin.Login}\nПароль\t- {admin.Password}");
 
                 dir.Create();
@@ -100,7 +94,34 @@ namespace E_Shop
             }
         }
 
-
+        public static int SafeParseInt(this string s)
+        {
+            int i;
+            while (!int.TryParse(s, out _))
+            {
+                Console.WriteLine("Невозможно преобразовать введенную строку к числу. ");
+                Thread.Sleep(500);
+                Console.Clear();
+                Console.Write("Введите корректное число: ");
+                s = Console.ReadLine().Trim();
+            }
+            i = int.Parse(s);
+            return i;
+        }
+        public static double SafeParseDouble(this string s)
+        {
+            double i;
+            while (!double.TryParse(s, out _))
+            {
+                Console.WriteLine("Невозможно преобразовать введенную строку к десятичной дроби.");
+                Thread.Sleep(500);
+                Console.Clear();
+                Console.WriteLine("Введите корректное число: ");
+                s = Console.ReadLine().Trim();
+            }
+            i = double.Parse(s);
+            return i;
+        }
 
         public static Shop ChooseShop()
         {
@@ -225,13 +246,7 @@ namespace E_Shop
             switch (type)
             {
                 case "логин":
-                    pattern = @"^[a-zA-Z]{3-15}$";
-                    if (!Regex.IsMatch(s, pattern))
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Логин должен состоять из латинских букв и быть длиной от 3 до 15 символов!\nВведите логин ещё раз:");
-                        return false;
-                    }
+
                     break;
 
                 case "пароль":
