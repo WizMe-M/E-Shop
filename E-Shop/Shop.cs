@@ -1,13 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace E_Shop
 {
     [Serializable]
     class Shop
     {
-        public string Name { get; set; }
+        string name;
+        public string Name
+        {
+            get
+            {
+                return name;
+            }
+            set
+            {
+                string pattern = @"^(([A-Z](?:[a-zA-Z0-9 \.\-]+))|([А-Я](?:[а-яА-Я0-9 \.\-]+)))$";
+                while (!Regex.IsMatch(value, pattern))
+                {
+                    Console.Clear();
+                    Console.WriteLine("Название склада должно начинаться с заглавной буквы и " +
+                        "состоять либо из кириллицы, либо латиницы. " +
+                        "\nРазрешены: числа, точка, тире и пробел.");
+                    Console.Write("Введите название склада: ");
+                    value = Console.ReadLine();
+                }
+                name = value;
+            }
+        }
         Storage storage;
         public Storage AttachedStorage
         {
@@ -18,13 +40,11 @@ namespace E_Shop
                 Shop_OnChangeStorage();
             }
         }
-        Shop()
-        {
-            ChooseAttachedStorage();
-        }
-        public Shop(string Name) : this()
+
+        public Shop(string Name)
         {
             this.Name = Name;
+            ChooseAttachedStorage();
         }
         void Shop_OnChangeStorage()
         {

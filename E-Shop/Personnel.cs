@@ -9,7 +9,7 @@ namespace E_Shop
     [Serializable]
     class Personnel : Account
     {
-        public Personnel(string Login, string Password) : base(Login, Password)
+        public Personnel() : base()
         {
             Position = "Кадровик";
             WorkPlace = "Офис";
@@ -20,6 +20,17 @@ namespace E_Shop
                 ("Уволить сотрудника", FireUser),
                 ("Перевести сотрудника на другую должность", TransferToNewPosition)});
         }
+        //public Personnel(string Login, string Password) : base(Login, Password)
+        //{
+        //    Position = "Кадровик";
+        //    WorkPlace = "Офис";
+        //    Functions.AddRange(new (string, Method)[] {
+        //        ("Просмотреть данные сотрудников", ShowUsers),
+        //        ("Изменить данные сотрудников", EditUsers),
+        //        ("Нанять сотрудника", HireUser),
+        //        ("Уволить сотрудника", FireUser),
+        //        ("Перевести сотрудника на другую должность", TransferToNewPosition)});
+        //}
 
         private void ShowUsers()
         {
@@ -51,7 +62,7 @@ namespace E_Shop
                 Console.WriteLine($"СТАТУС СОТРУДНИКА - " + (acc.isHired ? "работает" : "уволен"));
                 Console.ForegroundColor = acc.isHired ? ConsoleColor.White : ConsoleColor.DarkGray;
                 Console.WriteLine($"ФИО сотрудника: {acc.LastName} {acc.FirstName} {acc.Patronomic}");
-                Console.WriteLine($"Дата рождения: {acc.BirthdayDate.ToShortDateString()}; Возраст: {acc.Age}");
+                Console.WriteLine($"Дата рождения: {acc.BirthdayDate}; Возраст: {acc.Age}");
                 Console.WriteLine($"Образование: {acc.StudyYears} лет; Опыт работы: {acc.WorkExperience} лет");
                 Console.WriteLine($"Должность: {acc.Position}; Зарплата: {acc.Salary}");
                 Console.WriteLine("Нажмите любую кнопку, чтобы продолжить...");
@@ -88,7 +99,7 @@ namespace E_Shop
                     "Фамилия - " + accounts[index].FirstName,
                     "Имя - " + accounts[index].LastName,
                     "Отчество - " + accounts[index].Patronomic,
-                    "Дата рождения: " + accounts[index].BirthdayDate.ToShortDateString(),
+                    "Дата рождения: " + accounts[index].BirthdayDate,
                     "Возраст - " + accounts[index].Age.ToString(),
                     "Образование - " + accounts[index].StudyYears.ToString(),
                     "Опыт работы - " + accounts[index].WorkExperience.ToString(),
@@ -111,7 +122,7 @@ namespace E_Shop
                             accounts[index].Patronomic = changedData;
                             break;
                         case 3:
-                            accounts[index].BirthdayDate = DateTime.Parse(changedData);
+                            accounts[index].BirthdayDate = changedData;
                             break;
                         case 4:
                             accounts[index].Age = int.Parse(changedData);
@@ -241,12 +252,15 @@ namespace E_Shop
 
             Account AccountNewPosition = positions[posNumber] switch
             {
-                "Администратор" => new Admin(accounts[index].Login, accounts[index].Password),
-                "Кадровик" => new Personnel(accounts[index].Login, accounts[index].Password),
-                "Кладовщик" => new Warehouseman(accounts[index].Login, accounts[index].Password),
-                "Продавец" => new Seller(accounts[index].Login, accounts[index].Password),
+                "Администратор" => new Admin(),
+                "Кадровик" => new Personnel(),
+                "Кладовщик" => new Warehouseman(),
+                "Продавец" => new Seller(),
+                "Бухгалтер" => new Accountant(),
                 _ => null,
             };
+            AccountNewPosition.Login = accounts[index].Login;
+            AccountNewPosition.Password = accounts[index].Password;
             accounts.RemoveAt(index);
 
             accounts.Insert(index, AccountNewPosition);

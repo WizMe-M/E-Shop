@@ -7,10 +7,11 @@ using System.Threading;
 
 namespace E_Shop
 {
+    //Кладовщик
     [Serializable]
     class Warehouseman : Account
     {
-        public Warehouseman(string Login, string Password) : base(Login, Password)
+        public Warehouseman() : base()
         {
             Position = "Кладовщик";
             WorkPlace = "Не указано";
@@ -22,6 +23,18 @@ namespace E_Shop
                 ("Изменить данные о товаре на складе", EditProduct),
                 ("Забраковать товар (удалить товар со склада)", DeffectProduct)});
         }
+        //public Warehouseman(string Login, string Password) : base(Login, Password)
+        //{
+        //    Position = "Кладовщик";
+        //    WorkPlace = "Не указано";
+        //    Functions.AddRange(new (string, Method)[] {
+        //        ("Создать склад", CreateStorage),
+        //        ("Просмотреть товар", ShowProduct),
+        //        ("Добавить новый товар на склад", AddProductToStorage),
+        //        ("Переместить товар с одного склада на другой", MoveProduct),
+        //        ("Изменить данные о товаре на складе", EditProduct),
+        //        ("Забраковать товар (удалить товар со склада)", DeffectProduct)});
+        //}
         private void CreateStorage()
         {
             Console.WriteLine("Введите название для нового склада");

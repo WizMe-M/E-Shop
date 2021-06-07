@@ -11,7 +11,7 @@ namespace E_Shop
     [Serializable]
     class Admin : Account
     {
-        public Admin(string Login, string Password) : base(Login, Password)
+        public Admin() : base()
         {
             Position = "Администратор";
             WorkPlace = "Офис";
@@ -22,6 +22,17 @@ namespace E_Shop
                     ("Удалить пользователя", DeleteAccount),
                     ("Восстановить пользователя", RestoreAccount)});
         }
+        //public Admin(string Login, string Password) : base(Login, Password)
+        //{
+        //    Position = "Администратор";
+        //    WorkPlace = "Офис";
+        //    Functions.AddRange(new (string, Method)[] {
+        //            ("Просмотреть данные пользователя", ShowAccount),
+        //            ("Изменить данные пользователя", EditAccount),
+        //            ("Зарегистрировать пользователя", RegisterNewAccount),
+        //            ("Удалить пользователя", DeleteAccount),
+        //            ("Восстановить пользователя", RestoreAccount)});
+        //}
         void ShowAccount()
         {
             while (true)
@@ -57,7 +68,7 @@ namespace E_Shop
                     Console.WriteLine($"Почта пользователя: {(acc as Customer).Email}");
                 else
                 {
-                    Console.WriteLine($"Дата рождения: {acc.BirthdayDate.ToShortDateString()}; Возраст: {acc.Age}");
+                    Console.WriteLine($"Дата рождения: {acc.BirthdayDate}; Возраст: {acc.Age}");
                     Console.WriteLine($"Образование: {acc.StudyYears} лет; Опыт работы: {acc.WorkExperience} лет");
                     Console.WriteLine($"Должность: {acc.Position}; Зарплата: {acc.Salary}");
                 }
@@ -172,7 +183,7 @@ namespace E_Shop
                     "Фамилия - " + accounts[index].FirstName,
                     "Имя - " + accounts[index].LastName,
                     "Отчество - " + accounts[index].Patronomic,
-                    "Дата рождения: " + accounts[index].BirthdayDate.ToShortDateString(),
+                    "Дата рождения: " + accounts[index].BirthdayDate,
                     "Возраст - " + accounts[index].Age.ToString(),
                     "Образование - " + accounts[index].StudyYears.ToString(),
                     "Опыт работы - " + accounts[index].WorkExperience.ToString(),
@@ -203,7 +214,7 @@ namespace E_Shop
                             accounts[index].Patronomic = changedData;
                             break;
                         case 5:
-                            accounts[index].BirthdayDate = DateTime.Parse(changedData);
+                            accounts[index].BirthdayDate = changedData;
                             break;
                         case 6:
                             accounts[index].Age = int.Parse(changedData);
